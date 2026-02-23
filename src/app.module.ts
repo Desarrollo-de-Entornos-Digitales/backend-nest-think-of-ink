@@ -1,10 +1,36 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { User } from './users/user.entity';
+import { Role } from './roles/role.entity';
+import { Post } from './posts/post.entity';
+import { Comment } from './comments/comment.entity';
+import { Rating } from './ratings/rating.entity';
+
+import { UsersModule } from './users/users.module';
+import { RolesModule } from './roles/roles.module';
+import { PostsModule } from './posts/posts.module';
+import { CommentsModule } from './comments/comments.module';
+import { RatingsModule } from './ratings/ratings.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: '1234',
+      database: 'think_of_ink',
+      entities: [User, Role, Post, Comment, Rating],
+      synchronize: true,
+    }),
+
+    UsersModule,
+    RolesModule,
+    PostsModule,
+    CommentsModule,
+    RatingsModule,
+  ],
 })
 export class AppModule {}
