@@ -22,19 +22,19 @@ export class User {
   @Column()
   password: string;
 
-  @ManyToOne(() => Role, (role) => role.users, { eager: true })
+  @ManyToOne(() => Role, (r) => r.users, { eager: true })
   @JoinColumn({ name: 'role_name' })
   role: Role;
 
-  @OneToMany(() => Post, (post) => post.author)
+  @OneToMany(() => Post, (p) => p.author)
   posts: Post[];
 
-  @OneToMany(() => Comment, (comment) => comment.author)
+  @OneToMany(() => Comment, (c) => c.author)
   comments: Comment[];
 
-  @OneToMany(() => Rating, (rating) => rating.emitter)
+  @OneToMany(() => Rating, (r) => r.emitter)
   ratingsGiven: Rating[];
 
-  @OneToMany(() => Rating, (rating) => rating.receiver)
+  @OneToMany(() => Rating, (r) => r.receiver)
   ratingsReceived: Rating[];
 }
