@@ -1,3 +1,8 @@
+
+// podemos apreciar por aqui  la conexion con postgreSQL y el uso de typeORM
+
+
+
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
