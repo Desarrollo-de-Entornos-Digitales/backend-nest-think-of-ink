@@ -17,6 +17,12 @@ export class Comment {
   @Column('text')
   text: string;
 
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  createdAt: Date;
+
   @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'post_id' })
   post: Post;
@@ -24,7 +30,4 @@ export class Comment {
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   author: User;
-
-  @CreateDateColumn()
-  createdAt: Date;
 }

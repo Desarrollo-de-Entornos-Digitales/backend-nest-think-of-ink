@@ -22,7 +22,7 @@ export class User {
   @Column()
   password: string;
 
-  @ManyToOne(() => Role, (r) => r.users, { eager: true })// usamos manyToone ya que muchos usuarios pueden tener el mismo rol
+  @ManyToOne(() => Role, (r) => r.users, { eager: true }) // usamos manyToone ya que muchos usuarios pueden tener el mismo rol
   @JoinColumn({ name: 'role_name' })
   role: Role;
 

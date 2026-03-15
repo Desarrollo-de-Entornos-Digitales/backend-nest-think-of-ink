@@ -17,6 +17,9 @@ import { RolesModule } from './roles/roles.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { RatingsModule } from './ratings/ratings.module';
+import { CategoryModule } from './category/category.module';
+import { StudioModule } from './studio/studio.module';
+import { PermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [
@@ -36,6 +39,9 @@ import { RatingsModule } from './ratings/ratings.module';
     PostsModule,
     CommentsModule,
     RatingsModule,
+    CategoryModule,
+    StudioModule,
+    PermissionModule,
   ],
 })
 export class AppModule {}

@@ -21,13 +21,16 @@ export class Post {
   @Column({ nullable: true })
   imageUrl: string;
 
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  createdAt: Date;
+
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   author: User;
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
-
-  @CreateDateColumn()
-  createdAt: Date;
 }

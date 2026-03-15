@@ -1,10 +1,16 @@
-import { Entity, PrimaryColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, OneToMany, Column } from 'typeorm';
 import { User } from '../users/user.entity';
 
 @Entity()
 export class Role {
-  @PrimaryColumn()
-  name: string; // 'Admin' | 'Tatuador' | 'Regular'
+  @PrimaryColumn({ unique: true })
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column({ unique: true })
+  description: string;
 
   @OneToMany(() => User, (user) => user.role)
   users: User[];

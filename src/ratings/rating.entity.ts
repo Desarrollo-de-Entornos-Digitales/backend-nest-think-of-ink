@@ -22,7 +22,9 @@ export class Rating {
   @JoinColumn({ name: 'emitter_id' })
   emitter: User;
 
-  @ManyToOne(() => User, (user) => user.ratingsReceived, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.ratingsReceived, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'receiver_id' })
   receiver: User;
 
