@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
@@ -11,23 +10,19 @@ import { Post } from '../posts/post.entity';
 
 @Entity()
 export class Comment {
+
   @PrimaryGeneratedColumn()
   id: number;
+
+  @ManyToOne(() => User, user => user.comments, { onDelete: 'CASCADE' })
+  user: User;
+
+  @ManyToOne(() => Post, post => post.comments, { onDelete: 'CASCADE' })
+  post: Post;
 
   @Column('text')
   text: string;
 
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
+  @CreateDateColumn()
   createdAt: Date;
-
-  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'post_id' })
-  post: Post;
-
-  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  author: User;
 }

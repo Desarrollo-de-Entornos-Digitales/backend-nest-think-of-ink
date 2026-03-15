@@ -26,10 +26,10 @@ import { PermissionModule } from './permission/permission.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: 5433,
       username: 'postgres',
-      password: '1234',
-      database: 'think_of_ink',
+      password: 'postgres',
+      database: 'mydatabase',
       entities: [User, Role, Post, Comment, Rating],
       synchronize: true,
     }),

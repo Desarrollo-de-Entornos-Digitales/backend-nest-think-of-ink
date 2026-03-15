@@ -1,40 +1,41 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-} from 'typeorm';
-import { Role } from '../roles/role.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 import { Post } from '../posts/post.entity';
 import { Comment } from '../comments/comment.entity';
+import { Role } from '../roles/role.entity';
 import { Rating } from '../ratings/rating.entity';
 
 @Entity()
 export class User {
+
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column()
+  username: string;
+
+  @Column()
   email: string;
 
   @Column()
   password: string;
 
-  @ManyToOne(() => Role, (r) => r.users, { eager: true }) // usamos manyToone ya que muchos usuarios pueden tener el mismo rol
-  @JoinColumn({ name: 'role_name' })
-  role: Role;
-
-  @OneToMany(() => Post, (p) => p.author)
+  // RELACIÓN CON POSTS
+  @OneToMany(() => Post, post => post.user)
   posts: Post[];
 
-  @OneToMany(() => Comment, (c) => c.author)
+  // RELACIÓN CON COMMENTS
+  @OneToMany(() => Comment, comment => comment.user)
   comments: Comment[];
 
-  @OneToMany(() => Rating, (r) => r.emitter)
+  // RELACIÓN CON ROLE
+  @ManyToOne(() => Role, role => role.users)
+  role: Role;
+
+  // RATINGS QUE EL USUARIO DA
+  @OneToMany(() => Rating, rating => rating.emitter)
   ratingsGiven: Rating[];
 
-  @OneToMany(() => Rating, (r) => r.receiver)
+  // RATINGS QUE EL USUARIO RECIBE
+  @OneToMany(() => Rating, rating => rating.receiver)
   ratingsReceived: Rating[];
 }

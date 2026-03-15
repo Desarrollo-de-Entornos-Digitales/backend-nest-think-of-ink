@@ -1,25 +1,33 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { Role } from '../roles/role.entity';
 
 @Injectable()
 export class UsersService {
+
   constructor(
-    @InjectRepository(User) private readonly usersRepo: Repository<User>,
-    @InjectRepository(Role) private readonly rolesRepo: Repository<Role>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  async create(email: string, password: string, roleName: string) {
-    const role = await this.rolesRepo.findOne({ where: { name: roleName } });
-    if (!role) throw new BadRequestException('Role not found');
-
-    const user = this.usersRepo.create({ email, password, role });
-    return this.usersRepo.save(user);
+  create(user: Partial<User>) {
+    return this.userRepository.save(user);
   }
 
   findAll() {
-    return this.usersRepo.find({ relations: { role: true } });
+    return this.userRepository.find();
+  }
+
+  findOne(id: number) {
+    return this.userRepository.findOneBy({ id });
+  }
+
+  update(id: number, user: Partial<User>) {
+    return this.userRepository.update(id, user);
+  }
+
+  remove(id: number) {
+    return this.userRepository.delete(id);
   }
 }

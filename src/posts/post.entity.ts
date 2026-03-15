@@ -4,16 +4,20 @@ import {
   Column,
   ManyToOne,
   OneToMany,
-  JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Comment } from '../comments/comment.entity';
+import { Category } from '../category/category.entity';
 
 @Entity()
 export class Post {
+
   @PrimaryGeneratedColumn()
   id: number;
+
+  @ManyToOne(() => User, user => user.posts, { onDelete: 'CASCADE' })
+  user: User;
 
   @Column('text')
   content: string;
@@ -21,16 +25,12 @@ export class Post {
   @Column({ nullable: true })
   imageUrl: string;
 
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  author: User;
+  @ManyToOne(() => Category, category => category.posts)
+  category: Category;
 
-  @OneToMany(() => Comment, (comment) => comment.post)
+  @OneToMany(() => Comment, comment => comment.post)
   comments: Comment[];
 }
