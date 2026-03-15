@@ -1,8 +1,3 @@
-
-// podemos apreciar por aqui  la conexion con postgreSQL y el uso de typeORM
-
-
-
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -11,6 +6,7 @@ import { Role } from './roles/role.entity';
 import { Post } from './posts/post.entity';
 import { Comment } from './comments/comment.entity';
 import { Rating } from './ratings/rating.entity';
+import { Category } from './category/category.entity';
 
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
@@ -30,7 +26,7 @@ import { PermissionModule } from './permission/permission.module';
       username: 'postgres',
       password: 'postgres',
       database: 'mydatabase',
-      entities: [User, Role, Post, Comment, Rating],
+      entities: [User, Role, Post, Comment, Rating, Category],
       synchronize: true,
     }),
 
