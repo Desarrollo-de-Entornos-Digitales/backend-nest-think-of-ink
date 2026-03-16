@@ -3,7 +3,6 @@ import { Role_perm } from '../role_perm/role_perm/role_perm.entity';
 
 @Entity()
 export class Permission {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,7 +12,7 @@ export class Permission {
   @Column()
   description: string;
 
-  @OneToMany(() => Role_perm, rolePerm => rolePerm.permission)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  @OneToMany(() => Role_perm, (rolePerm) => rolePerm.permission)
   rolePerms: Role_perm[];
-
 }
