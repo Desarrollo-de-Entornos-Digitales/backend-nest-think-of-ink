@@ -1,3 +1,5 @@
+import { Permission } from './permission/permission.entity';
+import { Role_perm } from './role_perm/role_perm/role_perm.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -17,6 +19,7 @@ import { CategoryModule } from './category/category.module';
 import { StudioModule } from './studio/studio.module';
 import { PermissionModule } from './permission/permission.module';
 
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -26,7 +29,7 @@ import { PermissionModule } from './permission/permission.module';
       username: 'postgres',
       password: 'postgres',
       database: 'mydatabase',
-      entities: [User, Role, Post, Comment, Rating, Category],
+      entities: [User, Role, Post, Comment, Rating, Category,Permission,Role_perm],
       synchronize: true,
     }),
 

@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Role_perm } from '../role_perm/role_perm/role_perm.entity';
 
 @Entity()
-export class Category {
+export class Permission {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -10,4 +12,8 @@ export class Category {
 
   @Column()
   description: string;
+
+  @OneToMany(() => Role_perm, rolePerm => rolePerm.permission)
+  rolePerms: Role_perm[];
+
 }
