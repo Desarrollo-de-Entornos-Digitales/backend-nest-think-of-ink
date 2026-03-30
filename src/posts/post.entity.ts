@@ -12,11 +12,10 @@ import { Category } from '../category/category.entity';
 
 @Entity()
 export class Post {
-
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, user => user.posts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   user: User;
 
   @Column('text')
@@ -28,9 +27,9 @@ export class Post {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Category, category => category.posts)
+  @ManyToOne(() => Category, (category) => category.posts)
   category: Category;
 
-  @OneToMany(() => Comment, comment => comment.post)
+  @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
 }

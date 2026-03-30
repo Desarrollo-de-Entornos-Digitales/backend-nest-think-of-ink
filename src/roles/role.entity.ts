@@ -4,7 +4,6 @@ import { Role_perm } from '../role_perm/role_perm/role_perm.entity';
 
 @Entity()
 export class Role {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,10 +13,9 @@ export class Role {
   @Column({ unique: true })
   description: string;
 
-  @OneToMany(() => User, user => user.role)
+  @OneToMany(() => User, (user) => user.role)
   users: User[];
 
-  @OneToMany(() => Role_perm, rolePerm => rolePerm.role)
+  @OneToMany(() => Role_perm, (rolePerm) => rolePerm.role)
   rolePerms: Role_perm[];
-
 }

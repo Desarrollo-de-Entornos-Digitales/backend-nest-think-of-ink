@@ -10,14 +10,13 @@ import { Post } from '../posts/post.entity';
 
 @Entity()
 export class Comment {
-
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, user => user.comments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   user: User;
 
-  @ManyToOne(() => Post, post => post.comments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
   post: Post;
 
   @Column('text')
