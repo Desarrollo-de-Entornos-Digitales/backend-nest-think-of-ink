@@ -12,7 +12,6 @@ export class Permission {
   @Column()
   description: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @OneToMany(() => Role_perm, (rolePerm) => rolePerm.permission)
   rolePerms: Role_perm[];
 }
