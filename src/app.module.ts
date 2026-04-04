@@ -18,6 +18,7 @@ import { RatingsModule } from './ratings/ratings.module';
 import { CategoryModule } from './category/category.module';
 import { StudioModule } from './studio/studio.module';
 import { PermissionModule } from './permission/permission.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -41,6 +42,7 @@ import { PermissionModule } from './permission/permission.module';
     CategoryModule,
     StudioModule,
     PermissionModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

@@ -8,11 +8,11 @@ import {
   Delete,
   ParseIntPipe,
 } from '@nestjs/common';
-import { userService } from './users.service';
+import { UsersService } from './users.service';
 
-@Controller('User')
-export class UserController {
-  constructor(private readonly userService: userService) {}
+@Controller('users')
+export class UsersController {
+  constructor(private readonly userService: UsersService) {}
 
   @Get()
   findAll() {
