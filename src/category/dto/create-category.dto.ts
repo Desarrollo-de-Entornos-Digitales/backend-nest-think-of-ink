@@ -1,3 +1,4 @@
 export class CreateCategory {
-  address: string;
+  name: string;
+  description: string;
 }

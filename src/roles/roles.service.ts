@@ -8,7 +8,7 @@ import { CreateRole } from './dto/create-role.dto';
 import { UpdateRole } from './dto/update-role.dto';
 
 @Injectable()
-export class RolesService {
+export class RoleService {
   constructor(
     @InjectRepository(Role)
     private readonly RoleRepository: Repository<Role>,

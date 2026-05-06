@@ -20,7 +20,6 @@ import { StudioModule } from './studio/studio.module';
 import { PermissionModule } from './permission/permission.module';
 import { AuthModule } from './auth/auth.module';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -30,7 +29,16 @@ import { AuthModule } from './auth/auth.module';
       username: 'postgres',
       password: 'postgres',
       database: 'mydatabase',
-      entities: [User, Role, Post, Comment, Rating, Category,Permission,Role_perm],
+      entities: [
+        User,
+        Role,
+        Post,
+        Comment,
+        Rating,
+        Category,
+        Permission,
+        Role_perm,
+      ],
       synchronize: true,
     }),
 

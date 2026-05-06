@@ -125,3 +125,7 @@ describe('UsersService', () => {
     });
   });
 });
+
+export {
+  UsersService // 1. MOCK DEL REPOSITORIO DE USUARIOS
+};

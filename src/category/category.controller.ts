@@ -8,38 +8,37 @@ import {
   Delete,
   ParseIntPipe,
 } from '@nestjs/common';
-import { categoryService } from './category.service';
+import { CategoryService } from './category.service';
 
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
-  constructor(private readonly categoryService: categoryService) {}
+  constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  async findAll() {
+    return await this.categoryService.findAll();
   }
 
   @Get(':id')
-  findById(@Param('id', ParseIntPipe) id: number) {
-    return this.categoryService.findById(id);
+  async findById(@Param('id', ParseIntPipe) id: number) {
+    return await this.categoryService.findById(id);
   }
 
   @Post()
-  create(@Body() createCategoryDto: any) {
-    return this.categoryService.create(createCategoryDto);
+  async create(@Body() createCategoryDto: any) {
+    return await this.categoryService.create(createCategoryDto);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: any,
   ) {
-    return this.categoryService.update(id, updateCategoryDto);
+    return await this.categoryService.update(id, updateCategoryDto);
   }
 
-  // 5. ELIMINAR
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.categoryService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.categoryService.remove(id);
   }
 }

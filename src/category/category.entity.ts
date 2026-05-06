@@ -6,8 +6,11 @@ export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  address: string;
+  @Column() // Aquí estaba el problema, cámbialo a 'name'
+  name: string;
+
+  @Column({ nullable: true }) // Opcional: una descripción
+  description: string;
 
   @OneToMany(() => Post, (post) => post.category)
   posts: Post[];

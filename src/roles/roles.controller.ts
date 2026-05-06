@@ -8,37 +8,34 @@ import {
   Body,
   ParseIntPipe,
 } from '@nestjs/common';
-import { RolesService } from './roles.service';
+import { RoleService } from './roles.service';
 
 @Controller('roles')
-export class RolesController {
-  constructor(private readonly rolesService: RolesService) {}
+export class RoleController {
+  constructor(private readonly roleService: RoleService) {}
 
   @Get()
   findAll() {
-    return this.rolesService.findAll();
+    return this.roleService.findAll();
   }
 
   @Get(':id')
   findById(@Param('id', ParseIntPipe) id: number) {
-    return this.rolesService.findById(id);
+    return this.roleService.findById(id);
   }
 
   @Post()
   create(@Body() createRole: any) {
-    return this.rolesService.create(createRole);
+    return this.roleService.create(createRole);
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateRole: any,
-  ) {
-    return this.rolesService.update(id, updateRole);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateRole: any) {
+    return this.roleService.update(id, updateRole);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.rolesService.remove(id);
+    return this.roleService.remove(id);
   }
 }
