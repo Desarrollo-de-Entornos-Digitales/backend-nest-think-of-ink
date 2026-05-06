@@ -5,9 +5,10 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
-  private usersService: UsersService,
-  private jwtService: JwtService,
-) {}
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
+
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
 
@@ -31,5 +32,16 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  // 🔥 NUEVO MÉTODO REGISTER
+  async register(username: string, email: string, password: string) {
+    const newUser = await this.usersService.create({
+      username,
+      email,
+      password,
+    });
+
+    return newUser;
   }
 }
