@@ -25,20 +25,11 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5434,
+      port: 5433,
       username: 'postgres',
       password: 'postgres',
       database: 'mydatabase',
-      entities: [
-        User,
-        Role,
-        Post,
-        Comment,
-        Rating,
-        Category,
-        Permission,
-        Role_perm,
-      ],
+      entities: [User, Role, Post, Comment, Rating, Category,Permission,Role_perm],
       synchronize: true,
     }),
 
