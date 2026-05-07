@@ -1,6 +1,7 @@
 import { Permission } from './permission/permission.entity';
 import { Role_perm } from './role_perm/role_perm/role_perm.entity';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { User } from './users/user.entity';
@@ -22,15 +23,20 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5433,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'mydatabase',
-      entities: [User, Role, Post, Comment, Rating, Category,Permission,Role_perm],
-      synchronize: true,
+      url: process.env.DATABASE_URL,
+      host: process.env.DATABASE_URL ? undefined : process.env.DB_HOST ?? 'localhost',
+      port: process.env.DATABASE_URL ? undefined : Number(process.env.DB_PORT ?? 5433),
+      username: process.env.DATABASE_URL ? undefined : process.env.DB_USER ?? 'postgres',
+      password: process.env.DATABASE_URL ? undefined : process.env.DB_PASSWORD ?? 'postgres',
+      database: process.env.DATABASE_URL ? undefined : process.env.DB_NAME ?? 'mydatabase',
+      entities: [User, Role, Post, Comment, Rating, Category, Permission, Role_perm],
+      synchronize: process.env.DB_SYNCHRONIZE !== 'false',
+      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
     }),
 
     UsersModule,
