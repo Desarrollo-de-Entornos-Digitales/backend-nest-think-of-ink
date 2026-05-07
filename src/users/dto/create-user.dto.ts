@@ -1,5 +1,5 @@
 export class CreateUser {
-  username: string;
-  emil: string;
-  password: string;
+  username: string | undefined;
+  email: string | undefined;
+  password: string | undefined;
 }
