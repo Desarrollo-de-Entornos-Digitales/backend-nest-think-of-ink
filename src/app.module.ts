@@ -20,17 +20,27 @@ import { StudioModule } from './studio/studio.module';
 import { PermissionModule } from './permission/permission.module';
 import { AuthModule } from './auth/auth.module';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5433,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'mydatabase',
-      entities: [User, Role, Post, Comment, Rating, Category,Permission,Role_perm],
+      host: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT) || 5433,
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      database: process.env.DB_DATABASE || 'mydatabase',
+
+      entities: [
+        User,
+        Role,
+        Post,
+        Comment,
+        Rating,
+        Category,
+        Permission,
+        Role_perm,
+      ],
+
       synchronize: true,
     }),
 
