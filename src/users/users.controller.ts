@@ -7,8 +7,17 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { UsersService } from './users.service';
+import { UpdateProfile } from './dto/update-profile.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
+interface RequestWithUser extends Request {
+  user: { id: number; email: string };
+}
 
 @Controller('users')
 export class UsersController {
@@ -24,6 +33,12 @@ export class UsersController {
     return this.userService.findById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  updateProfile(@Body() updateProfileDto: UpdateProfile, @Req() req: RequestWithUser) {
+    return this.userService.update(req.user.id, updateProfileDto);
+  }
+
   @Post()
   create(@Body() CreateUser: any) {
     return this.userService.create(CreateUser);
@@ -34,7 +49,6 @@ export class UsersController {
     return this.userService.update(id, UpdateUser);
   }
 
-  // 5. ELIMINAR
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);

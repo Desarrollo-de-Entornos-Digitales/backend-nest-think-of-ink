@@ -1,7 +1,8 @@
-import { Timestamp } from 'typeorm';
-
 export class CreatePost {
+  title: string;
   content: string;
+  category?: { name: string };
+  location: string;
   imageUrl: string;
-  createdAt: Timestamp;
+  postType: string;
 }

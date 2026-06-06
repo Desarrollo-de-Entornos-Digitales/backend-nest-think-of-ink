@@ -9,62 +9,128 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
-import { Request } from 'express'; // Importación necesaria
+import { Request } from 'express';
 import { PostService } from './post.service';
+import { CreatePost } from './dto/create-post.dto';
+import { UpdatePost } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { LikesService } from '../likes/likes.service';
+import { commentService } from '../comments/comment.service';
+import { CreateComment } from '../comments/dto/create-comment.dto';
 
 interface RequestWithUser extends Request {
   user: {
     id: number;
     email: string;
-    role?: string; // Opcional, por si lo tienes en tu token
+    role?: string;
   };
 }
 
 @Controller('posts')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly likesService: LikesService,
+    private readonly commentService: commentService,
+  ) {}
 
-  // --- RUTAS DE LECTURA ---
+  // --- FEED PRINCIPAL ---
 
   @Get()
-  findAll() {
-    return this.postService.findAll();
+  findAll(
+    @Query('sort') sort?: string,
+    @Query('category') category?: string,
+    @Query('userId') userId?: string,
+  ) {
+    return this.postService.findAll(sort, category, userId ? +userId : undefined);
   }
 
-  // 1. Ruta fija ANTES de ':id' para evitar conflictos
+  // --- CATEGORÍAS (endpoints fijos antes de :id) ---
+
+  @Get('recent')
+  findRecent() {
+    return this.postService.findRecent();
+  }
+
+  @Get('popular')
+  findPopular() {
+    return this.postService.findPopular();
+  }
+
+  @Get('viral')
+  findViral() {
+    return this.postService.findViral();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('my-posts')
   findMyPosts(@Req() req: RequestWithUser) {
-    // Ahora 'req.user.id' es seguro y el linter no marcará error
-    const userId = req.user.id;
-    return this.postService.findMyPosts(userId);
+    return this.postService.findMyPosts(req.user.id);
   }
+
+  // --- DETALLE ---
 
   @Get(':id')
   findById(@Param('id', ParseIntPipe) id: number) {
     return this.postService.findById(id);
   }
 
-  // --- RUTAS DE ACCIÓN ---
+  // --- LIKES ---
 
-  @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body() createPostDto: any) {
-    // Puedes cambiar 'any' por tu CreatePostDto si lo tienes
-    return this.postService.create(createPostDto);
+  @Get(':id/likes')
+  getLikesInfo(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+    return this.likesService.getLikesInfo(req.user.id, id);
   }
 
-  @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updatePostDto: any) {
+  @Post(':id/like')
+  like(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+    return this.likesService.like(req.user.id, id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id/like')
+  unlike(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+    return this.likesService.unlike(req.user.id, id);
+  }
+
+  // --- COMENTARIOS ---
+
+  @Get(':id/comments')
+  getComments(@Param('id', ParseIntPipe) id: number) {
+    return this.commentService.findByPost(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/comments')
+  createComment(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() createCommentDto: CreateComment,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.commentService.create(createCommentDto, req.user.id, id);
+  }
+
+  // --- CRUD ---
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  create(@Body() createPostDto: CreatePost, @Req() req: RequestWithUser) {
+    return this.postService.create(createPostDto, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updatePostDto: UpdatePost) {
     return this.postService.update(id, updatePostDto);
   }
 
-  @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.postService.remove(id);
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+    return this.postService.remove(id, req.user.id);
   }
 }

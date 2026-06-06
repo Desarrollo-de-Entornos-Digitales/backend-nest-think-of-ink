@@ -5,10 +5,12 @@ import {
   ManyToOne,
   OneToMany,
   CreateDateColumn,
+  AfterLoad,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Comment } from '../comments/comment.entity';
 import { Category } from '../category/category.entity';
+import { PostLike } from '../likes/like.entity';
 
 @Entity()
 export class Post {
@@ -24,6 +26,15 @@ export class Post {
   @Column({ nullable: true })
   imageUrl: string;
 
+  @Column({ nullable: true })
+  title: string;
+
+  @Column({ nullable: true })
+  location: string;
+
+  @Column({ nullable: true })
+  postType: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -32,4 +43,16 @@ export class Post {
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
+
+  @OneToMany(() => PostLike, (like) => like.post)
+  likes: PostLike[];
+
+  likesCount: number;
+  commentsCount: number;
+
+  @AfterLoad()
+  addCounts() {
+    this.likesCount = this.likes?.length ?? 0;
+    this.commentsCount = this.comments?.length ?? 0;
+  }
 }

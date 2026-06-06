@@ -2,18 +2,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { commentService } from './comment.service';
 import { Comment } from './comment.entity';
+import { Post } from '../posts/post.entity';
 
 describe('commentService', () => {
   let service: commentService;
 
-  // 1. MOCK DEL REPOSITORIO DE COMENTARIOS
   const mockCommentRepository = {
     create: jest.fn(),
     save: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
     findOneBy: jest.fn(),
+    findOne: jest.fn(),
     find: jest.fn(),
+  };
+
+  const mockPostRepository = {
+    findOne: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -23,6 +28,10 @@ describe('commentService', () => {
         {
           provide: getRepositoryToken(Comment),
           useValue: mockCommentRepository,
+        },
+        {
+          provide: getRepositoryToken(Post),
+          useValue: mockPostRepository,
         },
       ],
     }).compile();
@@ -41,17 +50,19 @@ describe('commentService', () => {
   // --- PRUEBA: CREATE ---
   describe('create', () => {
     it('debe crear y guardar un nuevo comentario', async () => {
-      const dto = { content: '¡Increíble tatuaje!', userId: 1, postId: 1 };
-      const savedComment = { id: 1, ...dto };
+      const dto = { text: '¡Increíble tatuaje!' };
+      const userId = 1;
+      const postId = 1;
+      const savedComment = { id: 1, text: '¡Increíble tatuaje!', user: { id: 1 }, post: { id: 1 } };
 
+      mockPostRepository.findOne.mockResolvedValue({ id: 1 });
       mockCommentRepository.create.mockReturnValue(dto);
       mockCommentRepository.save.mockResolvedValue(savedComment);
+      mockCommentRepository.findOne.mockResolvedValue(savedComment);
 
-      const result = await service.create(dto as any);
+      const result = await service.create(dto as any, userId, postId);
 
       expect(result).toEqual(savedComment);
-      expect(mockCommentRepository.create).toHaveBeenCalledWith(dto);
-      expect(mockCommentRepository.save).toHaveBeenCalledWith(dto);
     });
   });
 

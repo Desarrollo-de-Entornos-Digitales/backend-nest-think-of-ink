@@ -24,6 +24,33 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  fullName: string;
+
+  @Column({ nullable: true })
+  profession: string;
+
+  @Column({ nullable: true, type: 'text' })
+  description: string;
+
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  website: string;
+
+  @Column({ nullable: true })
+  linkedin: string;
+
+  @Column({ nullable: true })
+  instagram: string;
+
+  @Column({ nullable: true })
+  behance: string;
+
+  @Column({ nullable: true })
+  portfolio: string;
+
   // RELACIÓN CON POSTS
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];

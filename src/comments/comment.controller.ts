@@ -25,8 +25,8 @@ export class CommentController {
   }
 
   @Post()
-  create(@Body() CreateComment: any) {
-    return this.commentService.create(CreateComment);
+  create(@Body() createCommentDto: any) {
+    return this.commentService.create(createCommentDto, 0, 0);
   }
 
   @Patch(':id')

@@ -37,6 +37,10 @@ export class CategoryService {
     return await this.categoryRepository.findOneBy({ id });
   }
 
+  async findByName(name: string): Promise<Category | null> {
+    return await this.categoryRepository.findOneBy({ name });
+  }
+
   async findAll(): Promise<Category[]> {
     return await this.categoryRepository.find();
   }

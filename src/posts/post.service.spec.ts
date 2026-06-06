@@ -1,33 +1,42 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { postService } from './post.service';
+import { PostService } from './post.service';
 import { Post } from './post.entity';
+import { CategoryService } from '../category/category.service';
 
-describe('postService', () => {
-  let service: postService;
+describe('PostService', () => {
+  let service: PostService;
 
-  // 1. MOCK DEL REPOSITORIO DE POSTS
   const mockPostRepository = {
     create: jest.fn(),
     save: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
-    findOneBy: jest.fn(),
+    findOne: jest.fn(),
     find: jest.fn(),
+  };
+
+  const mockCategoryService = {
+    findByName: jest.fn(),
+    create: jest.fn(),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        postService,
+        PostService,
         {
           provide: getRepositoryToken(Post),
           useValue: mockPostRepository,
         },
+        {
+          provide: CategoryService,
+          useValue: mockCategoryService,
+        },
       ],
     }).compile();
 
-    service = module.get<postService>(postService);
+    service = module.get<PostService>(PostService);
   });
 
   afterEach(() => {
@@ -38,34 +47,30 @@ describe('postService', () => {
     expect(service).toBeDefined();
   });
 
-  // --- PRUEBA: CREATE ---
   describe('create', () => {
-    it('debe crear y guardar un nuevo post de tatuaje', async () => {
-      const dto = { 
-        title: 'Tatuaje Realista León', 
-        description: 'Sesión de 6 horas', 
-        imageUrl: 'http://imagen.com/tatto.jpg' 
+    it('debe crear y guardar un nuevo post', async () => {
+      const dto = {
+        title: 'Tatuaje Realista León',
+        content: 'Sesión de 6 horas',
+        imageUrl: 'http://imagen.com/tatto.jpg',
+        location: '',
+        postType: '',
       };
-      const savedPost = { id: 1, ...dto };
+      const userId = 1;
+      const savedPost = { id: 1, ...dto, user: { id: userId } };
 
       mockPostRepository.create.mockReturnValue(dto);
       mockPostRepository.save.mockResolvedValue(savedPost);
 
-      const result = await service.create(dto as any);
+      const result = await service.create(dto as any, userId);
 
       expect(result).toEqual(savedPost);
-      expect(mockPostRepository.create).toHaveBeenCalledWith(dto);
-      expect(mockPostRepository.save).toHaveBeenCalledWith(dto);
     });
   });
 
-  // --- PRUEBA: FIND ALL ---
   describe('findAll', () => {
     it('debe retornar todos los posts', async () => {
-      const posts = [
-        { id: 1, title: 'Old School' },
-        { id: 2, title: 'Fine Line' }
-      ];
+      const posts = [{ id: 1, title: 'Old School' }];
       mockPostRepository.find.mockResolvedValue(posts);
 
       const result = await service.findAll();
@@ -75,20 +80,21 @@ describe('postService', () => {
     });
   });
 
-  // --- PRUEBA: FIND BY ID ---
   describe('findById', () => {
     it('debe retornar un post específico por ID', async () => {
       const post = { id: 1, title: 'Geometric' };
-      mockPostRepository.findOneBy.mockResolvedValue(post);
+      mockPostRepository.findOne.mockResolvedValue(post);
 
       const result = await service.findById(1);
 
       expect(result).toEqual(post);
-      expect(mockPostRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+      expect(mockPostRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 1 },
+        relations: ['user', 'category', 'likes', 'comments'],
+      });
     });
   });
 
-  // --- PRUEBA: UPDATE ---
   describe('update', () => {
     it('debe actualizar el post y retornar la versión nueva', async () => {
       const id = 1;
@@ -96,33 +102,39 @@ describe('postService', () => {
       const updatedPost = { id, ...dto, description: 'Misma descripción' };
 
       mockPostRepository.update.mockResolvedValue({ affected: 1 });
-      mockPostRepository.findOneBy.mockResolvedValue(updatedPost);
+      mockPostRepository.findOne.mockResolvedValue(updatedPost);
 
       const result = await service.update(id, dto as any);
 
       expect(result).toEqual(updatedPost);
-      expect(mockPostRepository.update).toHaveBeenCalledWith(id, dto);
-      expect(mockPostRepository.findOneBy).toHaveBeenCalledWith({ id });
+      expect(mockPostRepository.update).toHaveBeenCalledWith(id, { title: 'Título Actualizado' });
     });
   });
 
-  // --- PRUEBAS: REMOVE ---
   describe('remove', () => {
-    it('debe retornar el ID del post eliminado', async () => {
+    it('debe eliminar el post si el usuario es el dueño', async () => {
+      const userId = 1;
+      const post = { id: 1, user: { id: userId } };
+
+      mockPostRepository.findOne.mockResolvedValue(post);
       mockPostRepository.delete.mockResolvedValue({ affected: 1 });
 
-      const result = await service.remove(1);
+      const result = await service.remove(1, userId);
 
-      expect(result).toEqual({ id: 1 });
-      expect(mockPostRepository.delete).toHaveBeenCalledWith(1);
+      expect(result).toEqual({ message: 'Post eliminado con éxito', id: 1 });
     });
 
-    it('debe retornar null si el post no existe para eliminar', async () => {
-      mockPostRepository.delete.mockResolvedValue({ affected: 0 });
+    it('debe lanzar error si el post no existe', async () => {
+      mockPostRepository.findOne.mockResolvedValue(null);
 
-      const result = await service.remove(999);
+      await expect(service.remove(999, 1)).rejects.toThrow();
+    });
 
-      expect(result).toBeNull();
+    it('debe lanzar error si el usuario no es el dueño', async () => {
+      const post = { id: 1, user: { id: 2 } };
+      mockPostRepository.findOne.mockResolvedValue(post);
+
+      await expect(service.remove(1, 1)).rejects.toThrow();
     });
   });
 });

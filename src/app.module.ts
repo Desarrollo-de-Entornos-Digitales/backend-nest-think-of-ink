@@ -10,6 +10,7 @@ import { Post } from './posts/post.entity';
 import { Comment } from './comments/comment.entity';
 import { Rating } from './ratings/rating.entity';
 import { Category } from './category/category.entity';
+import { PostLike } from './likes/like.entity';
 
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
@@ -20,6 +21,7 @@ import { CategoryModule } from './category/category.module';
 import { StudioModule } from './studio/studio.module';
 import { PermissionModule } from './permission/permission.module';
 import { AuthModule } from './auth/auth.module';
+import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [
@@ -34,7 +36,7 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DATABASE_URL ? undefined : process.env.DB_USER ?? 'postgres',
       password: process.env.DATABASE_URL ? undefined : process.env.DB_PASSWORD ?? 'postgres',
       database: process.env.DATABASE_URL ? undefined : process.env.DB_NAME ?? 'mydatabase',
-      entities: [User, Role, Post, Comment, Rating, Category, Permission, Role_perm],
+      entities: [User, Role, Post, Comment, Rating, Category, Permission, Role_perm, PostLike],
       synchronize: process.env.DB_SYNCHRONIZE !== 'false',
       ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
     }),
@@ -48,6 +50,7 @@ import { AuthModule } from './auth/auth.module';
     StudioModule,
     PermissionModule,
     AuthModule,
+    LikesModule,
   ],
 })
 export class AppModule {}
