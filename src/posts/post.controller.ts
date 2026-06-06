@@ -10,6 +10,7 @@ import {
   UseGuards,
   Req,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { PostService } from './post.service';
@@ -68,6 +69,30 @@ export class PostController {
   @Get('my-posts')
   findMyPosts(@Req() req: RequestWithUser) {
     return this.postService.findMyPosts(req.user.id);
+  }
+
+  // --- FILTRO POR PRECIO (antes de :id) ---
+
+  @Get('filter-by-price')
+  filterByPrice(
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+    @Query('sort') sort?: string,
+  ) {
+    const min = minPrice ? parseFloat(minPrice) : 0;
+    const max = maxPrice ? parseFloat(maxPrice) : Number.MAX_SAFE_INTEGER;
+
+    if (minPrice && (isNaN(min) || min < 0)) {
+      throw new BadRequestException('minPrice debe ser un número positivo');
+    }
+    if (maxPrice && (isNaN(max) || max < 0)) {
+      throw new BadRequestException('maxPrice debe ser un número positivo');
+    }
+    if (minPrice && maxPrice && min > max) {
+      throw new BadRequestException('minPrice no puede ser mayor que maxPrice');
+    }
+
+    return this.postService.filterByPrice(min, max, sort);
   }
 
   // --- DETALLE ---

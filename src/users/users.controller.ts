@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Patch,
+  Put,
   Param,
   Delete,
   ParseIntPipe,
@@ -36,6 +37,24 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Patch('profile')
   updateProfile(@Body() updateProfileDto: UpdateProfile, @Req() req: RequestWithUser) {
+    return this.userService.update(req.user.id, updateProfileDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMe(@Req() req: RequestWithUser) {
+    return this.userService.findById(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Req() req: RequestWithUser) {
+    return this.userService.findProfile(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('me')
+  updateMe(@Body() updateProfileDto: UpdateProfile, @Req() req: RequestWithUser) {
     return this.userService.update(req.user.id, updateProfileDto);
   }
 

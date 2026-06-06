@@ -14,6 +14,7 @@ describe('PostService', () => {
     delete: jest.fn(),
     findOne: jest.fn(),
     find: jest.fn(),
+    createQueryBuilder: jest.fn(),
   };
 
   const mockCategoryService = {
@@ -108,6 +109,42 @@ describe('PostService', () => {
 
       expect(result).toEqual(updatedPost);
       expect(mockPostRepository.update).toHaveBeenCalledWith(id, { title: 'Título Actualizado' });
+    });
+  });
+
+    describe('filterByPrice', () => {
+    it('debe retornar posts dentro del rango de precio', async () => {
+      const posts = [
+        { id: 1, priceMin: 50000, priceMax: 100000 },
+        { id: 2, priceMin: 100000, priceMax: 200000 },
+      ];
+      const mockQueryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(posts),
+      };
+      mockPostRepository.createQueryBuilder = jest.fn().mockReturnValue(mockQueryBuilder);
+
+      const result = await service.filterByPrice(50000, 200000, 'price_asc');
+      expect(result).toEqual(posts);
+      expect(mockQueryBuilder.getMany).toHaveBeenCalled();
+    });
+
+    it('debe excluir posts sin precio', async () => {
+      const posts: any[] = [];
+      const mockQueryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(posts),
+      };
+      mockPostRepository.createQueryBuilder = jest.fn().mockReturnValue(mockQueryBuilder);
+
+      const result = await service.filterByPrice(0, 100000);
+      expect(result).toEqual([]);
     });
   });
 

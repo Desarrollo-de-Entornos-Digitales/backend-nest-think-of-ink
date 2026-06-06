@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { categoryService } from './category.service';
+import { CategoryService } from './category.service';
 import { Category } from './category.entity';
 
-describe('categoryService', () => {
-  let service: categoryService;
+describe('CategoryService', () => {
+  let service: CategoryService;
   let repository: Repository<Category>;
 
-  // 1. MOCK DEL REPOSITORIO
   const mockCategoryRepository = {
     create: jest.fn(),
     save: jest.fn(),
@@ -16,12 +15,13 @@ describe('categoryService', () => {
     delete: jest.fn(),
     findOneBy: jest.fn(),
     find: jest.fn(),
+    findOne: jest.fn(),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        categoryService,
+        CategoryService,
         {
           provide: getRepositoryToken(Category),
           useValue: mockCategoryRepository,
@@ -29,7 +29,7 @@ describe('categoryService', () => {
       ],
     }).compile();
 
-    service = module.get<categoryService>(categoryService);
+    service = module.get<CategoryService>(CategoryService);
     repository = module.get<Repository<Category>>(getRepositoryToken(Category));
   });
 
@@ -99,21 +99,19 @@ describe('categoryService', () => {
 
   // --- PRUEBAS: REMOVE ---
   describe('remove', () => {
-    it('debe retornar el ID si la categoría fue eliminada (affected > 0)', async () => {
+    it('debe retornar message + id si la categoría fue eliminada (affected > 0)', async () => {
       mockCategoryRepository.delete.mockResolvedValue({ affected: 1 });
 
       const result = await service.remove(1);
 
-      expect(result).toEqual({ id: 1 });
+      expect(result).toEqual({ message: 'Categoría eliminada', id: 1 });
       expect(mockCategoryRepository.delete).toHaveBeenCalledWith(1);
     });
 
-    it('debe retornar null si ninguna categoría fue afectada', async () => {
+    it('debe lanzar NotFoundException si ninguna categoría fue afectada', async () => {
       mockCategoryRepository.delete.mockResolvedValue({ affected: 0 });
 
-      const result = await service.remove(999);
-
-      expect(result).toBeNull();
+      await expect(service.remove(999)).rejects.toThrow('Categoría 999 no existe');
     });
   });
 });

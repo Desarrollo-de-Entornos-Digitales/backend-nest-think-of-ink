@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { RolesService } from './roles.service';
+import { RoleService } from './roles.service';
 import { Role } from './role.entity';
 
-describe('RolesService', () => {
-  let service: RolesService;
+describe('RoleService', () => {
+  let service: RoleService;
 
   // 1. MOCK DEL REPOSITORIO DE ROLES
   const mockRoleRepository = {
@@ -19,7 +19,7 @@ describe('RolesService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        RolesService,
+        RoleService,
         {
           provide: getRepositoryToken(Role),
           useValue: mockRoleRepository,
@@ -27,7 +27,7 @@ describe('RolesService', () => {
       ],
     }).compile();
 
-    service = module.get<RolesService>(RolesService);
+    service = module.get<RoleService>(RoleService);
   });
 
   afterEach(() => {

@@ -117,6 +117,33 @@ export class PostService {
     return await this.findById(id);
   }
 
+  async filterByPrice(
+    minPrice: number,
+    maxPrice: number,
+    sort?: string,
+  ): Promise<Post[]> {
+    const query = this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.user', 'user')
+      .leftJoinAndSelect('post.category', 'category')
+      .leftJoinAndSelect('post.likes', 'likes')
+      .leftJoinAndSelect('post.comments', 'comments')
+      .where('post.priceMin IS NOT NULL')
+      .andWhere('post.priceMax IS NOT NULL')
+      .andWhere('post.priceMin >= :minPrice', { minPrice })
+      .andWhere('post.priceMax <= :maxPrice', { maxPrice });
+
+    if (sort === 'price_asc') {
+      query.orderBy('post.priceMin', 'ASC');
+    } else if (sort === 'price_desc') {
+      query.orderBy('post.priceMin', 'DESC');
+    } else {
+      query.orderBy('post.createdAt', 'DESC');
+    }
+
+    return await query.getMany();
+  }
+
   async remove(id: number, userId: number): Promise<{ message: string; id: number }> {
     const post = await this.postRepository.findOne({
       where: { id },

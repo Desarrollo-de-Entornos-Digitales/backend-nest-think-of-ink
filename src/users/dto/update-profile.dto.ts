@@ -10,4 +10,7 @@ export class UpdateProfile {
   behance?: string;
   instagram?: string;
   portfolio?: string;
+  bio?: string;
+  avatarUrl?: string;
+  location?: string;
 }

@@ -35,6 +35,12 @@ export class Post {
   @Column({ nullable: true })
   postType: string;
 
+  @Column({ nullable: true, type: 'int' })
+  priceMin: number;
+
+  @Column({ nullable: true, type: 'int' })
+  priceMax: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

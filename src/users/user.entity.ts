@@ -51,6 +51,21 @@ export class User {
   @Column({ nullable: true })
   portfolio: string;
 
+  @Column({ nullable: true, type: 'text' })
+  bio: string;
+
+  @Column({ nullable: true })
+  avatarUrl: string;
+
+  @Column({ nullable: true })
+  location: string;
+
+  @Column({ default: 0 })
+  followersCount: number;
+
+  @Column({ default: 0 })
+  followingCount: number;
+
   // RELACIÓN CON POSTS
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];

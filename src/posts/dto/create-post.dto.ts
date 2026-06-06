@@ -5,4 +5,6 @@ export class CreatePost {
   location: string;
   imageUrl: string;
   postType: string;
+  priceMin?: number;
+  priceMax?: number;
 }
