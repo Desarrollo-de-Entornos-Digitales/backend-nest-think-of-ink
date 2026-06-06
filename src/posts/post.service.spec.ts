@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { PostService } from './post.service';
 import { Post } from './post.entity';
+import { PostLike } from '../likes/like.entity';
+import { User } from '../users/user.entity';
+import { Studio } from '../studio/studio.entity';
+import { Category } from '../category/category.entity';
 import { CategoryService } from '../category/category.service';
 
 describe('PostService', () => {
@@ -15,6 +19,22 @@ describe('PostService', () => {
     findOne: jest.fn(),
     find: jest.fn(),
     createQueryBuilder: jest.fn(),
+  };
+
+  const mockPostLikeRepository = {
+    find: jest.fn(),
+  };
+
+  const mockUserRepository = {
+    find: jest.fn(),
+  };
+
+  const mockStudioRepository = {
+    find: jest.fn(),
+  };
+
+  const mockCategoryRepository = {
+    find: jest.fn(),
   };
 
   const mockCategoryService = {
@@ -31,6 +51,22 @@ describe('PostService', () => {
           useValue: mockPostRepository,
         },
         {
+          provide: getRepositoryToken(PostLike),
+          useValue: mockPostLikeRepository,
+        },
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUserRepository,
+        },
+        {
+          provide: getRepositoryToken(Studio),
+          useValue: mockStudioRepository,
+        },
+        {
+          provide: getRepositoryToken(Category),
+          useValue: mockCategoryRepository,
+        },
+        {
           provide: CategoryService,
           useValue: mockCategoryService,
         },
@@ -38,6 +74,7 @@ describe('PostService', () => {
     }).compile();
 
     service = module.get<PostService>(PostService);
+    mockPostLikeRepository.find.mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -76,7 +113,7 @@ describe('PostService', () => {
 
       const result = await service.findAll();
 
-      expect(result).toEqual(posts);
+      expect(result).toMatchObject(posts as any);
       expect(mockPostRepository.find).toHaveBeenCalled();
     });
   });
@@ -88,7 +125,7 @@ describe('PostService', () => {
 
       const result = await service.findById(1);
 
-      expect(result).toEqual(post);
+      expect(result).toMatchObject(post);
       expect(mockPostRepository.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
         relations: ['user', 'category', 'likes', 'comments'],
@@ -107,7 +144,7 @@ describe('PostService', () => {
 
       const result = await service.update(id, dto as any);
 
-      expect(result).toEqual(updatedPost);
+      expect(result).toMatchObject(updatedPost as any);
       expect(mockPostRepository.update).toHaveBeenCalledWith(id, { title: 'Título Actualizado' });
     });
   });
@@ -128,7 +165,7 @@ describe('PostService', () => {
       mockPostRepository.createQueryBuilder = jest.fn().mockReturnValue(mockQueryBuilder);
 
       const result = await service.filterByPrice(50000, 200000, 'price_asc');
-      expect(result).toEqual(posts);
+      expect(result).toMatchObject(posts as any);
       expect(mockQueryBuilder.getMany).toHaveBeenCalled();
     });
 
@@ -144,7 +181,7 @@ describe('PostService', () => {
       mockPostRepository.createQueryBuilder = jest.fn().mockReturnValue(mockQueryBuilder);
 
       const result = await service.filterByPrice(0, 100000);
-      expect(result).toEqual([]);
+      expect(result).toMatchObject([]);
     });
   });
 

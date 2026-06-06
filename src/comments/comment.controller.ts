@@ -3,40 +3,39 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { commentService } from './comment.service';
+import { CreateComment } from './dto/create-comment.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('comment')
+interface RequestWithUser extends Request {
+  user: { id: number; email: string };
+}
+
+@Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: commentService) {}
 
-  @Get()
-  findAll() {
-    return this.commentService.findAll();
-  }
-
-  @Get(':id')
-  findById(@Param('id', ParseIntPipe) id: number) {
-    return this.commentService.findById(id);
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createCommentDto: any) {
-    return this.commentService.create(createCommentDto, 0, 0);
+  create(@Body() createCommentDto: CreateComment, @Req() req: RequestWithUser) {
+    return this.commentService.create(createCommentDto, req.user.id);
   }
 
-  @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateCommentDto: any) {
-    return this.commentService.update(id, updateCommentDto);
+  @Get('post/:postId')
+  findByPost(@Param('postId', ParseIntPipe) postId: number) {
+    return this.commentService.findByPost(postId);
   }
 
-  // 5. ELIMINAR
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.commentService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+    return this.commentService.remove(id, req.user.id);
   }
 }

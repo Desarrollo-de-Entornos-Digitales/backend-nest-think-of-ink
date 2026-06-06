@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, OnModuleInit, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -6,12 +6,29 @@ import { Category } from './category.entity';
 import { CreateCategory } from './dto/create-category.dto';
 import { UpdateCategory } from './dto/update-category.dto';
 
+const SEED_CATEGORIES = [
+  { name: 'Blackwork', description: 'Tatuajes en negro y sombras' },
+  { name: 'Fine Line', description: 'Línea fina y minimalista' },
+  { name: 'Realismo', description: 'Retratos y arte realista' },
+  { name: 'Tradicional', description: 'Estilo old school tradicional' },
+  { name: 'Acuarela', description: 'Estilo acuarela y abstracto' },
+  { name: 'Geométrico', description: 'Geometría sagrada y patrones' },
+  { name: 'Neotradicional', description: 'Tradicional con detalles modernos' },
+];
+
 @Injectable()
-export class CategoryService {
+export class CategoryService implements OnModuleInit {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
   ) {}
+
+  async onModuleInit() {
+    const count = await this.categoryRepository.count();
+    if (count === 0) {
+      await this.categoryRepository.save(SEED_CATEGORIES);
+    }
+  }
 
   async create(createCategory: CreateCategory): Promise<Category> {
     const newCategory = this.categoryRepository.create(createCategory);

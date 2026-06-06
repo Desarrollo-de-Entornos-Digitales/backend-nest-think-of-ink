@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { UsersService } from './users.service';
+import { PostService } from '../posts/post.service';
 import { UpdateProfile } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -22,16 +23,20 @@ interface RequestWithUser extends Request {
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
+    private readonly postService: PostService,
+  ) {}
 
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  findById(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findById(id);
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Req() req: RequestWithUser) {
+    return this.userService.findProfile(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -46,10 +51,19 @@ export class UsersController {
     return this.userService.findById(req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Req() req: RequestWithUser) {
-    return this.userService.findProfile(req.user.id);
+  @Get(':id/profile')
+  findPublicProfile(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.findPublicProfile(id);
+  }
+
+  @Get(':id/posts')
+  findUserPosts(@Param('id', ParseIntPipe) id: number) {
+    return this.postService.findMyPosts(id);
+  }
+
+  @Get(':id')
+  findById(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.findPublicUser(id);
   }
 
   @UseGuards(JwtAuthGuard)

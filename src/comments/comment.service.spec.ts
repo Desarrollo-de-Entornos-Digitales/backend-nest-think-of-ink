@@ -10,7 +10,6 @@ describe('commentService', () => {
   const mockCommentRepository = {
     create: jest.fn(),
     save: jest.fn(),
-    update: jest.fn(),
     delete: jest.fn(),
     findOneBy: jest.fn(),
     findOne: jest.fn(),
@@ -50,17 +49,16 @@ describe('commentService', () => {
   // --- PRUEBA: CREATE ---
   describe('create', () => {
     it('debe crear y guardar un nuevo comentario', async () => {
-      const dto = { text: '¡Increíble tatuaje!' };
+      const dto = { postId: 1, content: '¡Increíble tatuaje!' };
       const userId = 1;
-      const postId = 1;
-      const savedComment = { id: 1, text: '¡Increíble tatuaje!', user: { id: 1 }, post: { id: 1 } };
+      const savedComment = { id: 1, content: '¡Increíble tatuaje!', user: { id: 1 }, post: { id: 1 } };
 
       mockPostRepository.findOne.mockResolvedValue({ id: 1 });
       mockCommentRepository.create.mockReturnValue(dto);
       mockCommentRepository.save.mockResolvedValue(savedComment);
       mockCommentRepository.findOne.mockResolvedValue(savedComment);
 
-      const result = await service.create(dto as any, userId, postId);
+      const result = await service.create(dto as any, userId);
 
       expect(result).toEqual(savedComment);
     });
@@ -92,41 +90,21 @@ describe('commentService', () => {
     });
   });
 
-  // --- PRUEBA: UPDATE ---
-  describe('update', () => {
-    it('debe actualizar un comentario y devolver el objeto actualizado', async () => {
-      const id = 1;
-      const dto = { content: 'Contenido editado' };
-      const updatedComment = { id, ...dto };
-
-      mockCommentRepository.update.mockResolvedValue({ affected: 1 });
-      mockCommentRepository.findOneBy.mockResolvedValue(updatedComment);
-
-      const result = await service.update(id, dto as any);
-
-      expect(result).toEqual(updatedComment);
-      expect(mockCommentRepository.update).toHaveBeenCalledWith(id, dto);
-      expect(mockCommentRepository.findOneBy).toHaveBeenCalledWith({ id });
-    });
-  });
-
   // --- PRUEBAS: REMOVE ---
   describe('remove', () => {
-    it('debe retornar el ID si el comentario fue eliminado', async () => {
+    it('debe eliminar el comentario si el usuario es el dueño', async () => {
+      mockCommentRepository.findOne.mockResolvedValue({ id: 1, user: { id: 1 } });
       mockCommentRepository.delete.mockResolvedValue({ affected: 1 });
 
-      const result = await service.remove(1);
+      const result = await service.remove(1, 1);
 
       expect(result).toEqual({ id: 1 });
-      expect(mockCommentRepository.delete).toHaveBeenCalledWith(1);
     });
 
-    it('debe retornar null si el comentario a eliminar no existe', async () => {
-      mockCommentRepository.delete.mockResolvedValue({ affected: 0 });
+    it('debe lanzar error si no es el dueño', async () => {
+      mockCommentRepository.findOne.mockResolvedValue({ id: 1, user: { id: 2 } });
 
-      const result = await service.remove(999);
-
-      expect(result).toBeNull();
+      await expect(service.remove(1, 1)).rejects.toThrow();
     });
   });
 });

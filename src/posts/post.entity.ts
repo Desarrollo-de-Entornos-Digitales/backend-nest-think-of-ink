@@ -11,6 +11,7 @@ import { User } from '../users/user.entity';
 import { Comment } from '../comments/comment.entity';
 import { Category } from '../category/category.entity';
 import { PostLike } from '../likes/like.entity';
+import { Studio } from '../studio/studio.entity';
 
 @Entity()
 export class Post {
@@ -52,6 +53,9 @@ export class Post {
 
   @OneToMany(() => PostLike, (like) => like.post)
   likes: PostLike[];
+
+  @ManyToOne(() => Studio, { nullable: true })
+  studio: Studio;
 
   likesCount: number;
   commentsCount: number;

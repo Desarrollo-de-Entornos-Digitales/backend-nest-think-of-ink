@@ -1,13 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { PostService } from '../posts/post.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
   let service: UsersService;
 
-  // 1. Definimos el Mock del Servicio
-  // Aquí ponemos los nombres de los métodos que tiene tu UsersService
   const mockUsersService = {
     create: jest.fn((dto) => {
       return { id: 1, ...dto };
@@ -18,6 +17,9 @@ describe('UsersController', () => {
     findById: jest.fn((id) => {
       return { id, email: 'test@test.com' };
     }),
+    findPublicUser: jest.fn((id) => {
+      return { id, username: 'testuser' };
+    }),
     update: jest.fn((id, dto) => {
       return { id, ...dto };
     }),
@@ -26,14 +28,22 @@ describe('UsersController', () => {
     }),
   };
 
+  const mockPostService = {
+    findMyPosts: jest.fn(),
+    findByStudio: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [
         {
-          // "Cuando el controlador pida UsersService, dale el mockUsersService"
           provide: UsersService,
           useValue: mockUsersService,
+        },
+        {
+          provide: PostService,
+          useValue: mockPostService,
         },
       ],
     }).compile();
@@ -71,10 +81,10 @@ describe('UsersController', () => {
   describe('findOne', () => {
     it('debe retornar un usuario por su ID', async () => {
       const id = "1";
-      const result = await controller.findById(+id); // Usamos + para convertir a número si es necesario
+      const result = await controller.findById(+id);
 
-      expect(result).toEqual({ id: 1, email: 'test@test.com' });
-      expect(service.findById).toHaveBeenCalled();
+      expect(result).toEqual({ id: 1, username: 'testuser' });
+      expect(service.findPublicUser).toHaveBeenCalledWith(1);
     });
   });
 

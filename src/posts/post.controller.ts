@@ -17,9 +17,9 @@ import { PostService } from './post.service';
 import { CreatePost } from './dto/create-post.dto';
 import { UpdatePost } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/optional-jwt.guard';
 import { LikesService } from '../likes/likes.service';
 import { commentService } from '../comments/comment.service';
-import { CreateComment } from '../comments/dto/create-comment.dto';
 
 interface RequestWithUser extends Request {
   user: {
@@ -39,42 +39,49 @@ export class PostController {
 
   // --- FEED PRINCIPAL ---
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get()
   findAll(
+    @Req() req: RequestWithUser,
     @Query('sort') sort?: string,
     @Query('category') category?: string,
     @Query('userId') userId?: string,
   ) {
-    return this.postService.findAll(sort, category, userId ? +userId : undefined);
+    return this.postService.findAll(sort, category, userId ? +userId : undefined, req.user?.id);
   }
 
   // --- CATEGORÍAS (endpoints fijos antes de :id) ---
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('recent')
-  findRecent() {
-    return this.postService.findRecent();
+  findRecent(@Req() req: RequestWithUser) {
+    return this.postService.findRecent(req.user?.id);
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('popular')
-  findPopular() {
-    return this.postService.findPopular();
+  findPopular(@Req() req: RequestWithUser) {
+    return this.postService.findPopular(req.user?.id);
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('viral')
-  findViral() {
-    return this.postService.findViral();
+  findViral(@Req() req: RequestWithUser) {
+    return this.postService.findViral(req.user?.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('my-posts')
   findMyPosts(@Req() req: RequestWithUser) {
-    return this.postService.findMyPosts(req.user.id);
+    return this.postService.findMyPosts(req.user.id, req.user.id);
   }
 
   // --- FILTRO POR PRECIO (antes de :id) ---
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('filter-by-price')
   filterByPrice(
+    @Req() req: RequestWithUser,
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
     @Query('sort') sort?: string,
@@ -92,14 +99,15 @@ export class PostController {
       throw new BadRequestException('minPrice no puede ser mayor que maxPrice');
     }
 
-    return this.postService.filterByPrice(min, max, sort);
+    return this.postService.filterByPrice(min, max, sort, req.user?.id);
   }
 
   // --- DETALLE ---
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get(':id')
-  findById(@Param('id', ParseIntPipe) id: number) {
-    return this.postService.findById(id);
+  findById(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+    return this.postService.findById(id, req.user?.id);
   }
 
   // --- LIKES ---
@@ -116,12 +124,6 @@ export class PostController {
     return this.likesService.like(req.user.id, id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Delete(':id/like')
-  unlike(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
-    return this.likesService.unlike(req.user.id, id);
-  }
-
   // --- COMENTARIOS ---
 
   @Get(':id/comments')
@@ -132,11 +134,12 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @Post(':id/comments')
   createComment(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() createCommentDto: CreateComment,
+    @Body() createCommentDto: any,
     @Req() req: RequestWithUser,
+    @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.commentService.create(createCommentDto, req.user.id, id);
+    createCommentDto.postId = id;
+    return this.commentService.create(createCommentDto, req.user.id);
   }
 
   // --- CRUD ---

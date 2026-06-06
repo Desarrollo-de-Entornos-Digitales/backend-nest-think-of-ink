@@ -1,23 +1,146 @@
-import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
+import { Injectable, OnModuleInit, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 
 import { Post } from './post.entity';
+import { PostLike } from '../likes/like.entity';
 import { CreatePost } from './dto/create-post.dto';
 import { UpdatePost } from './dto/update-post.dto';
 import { CategoryService } from '../category/category.service';
+import { User } from '../users/user.entity';
+import { Studio } from '../studio/studio.entity';
+import { Category } from '../category/category.entity';
+
+const SEED_POSTS = [
+  {
+    content: 'Dragon negro estilo japonés cubriendo todo el brazo',
+    imageUrl: '/images/posts/dragon-blackwork.jpg',
+    title: 'Dragón Japonés Blackwork',
+    priceMin: 80,
+    priceMax: 150,
+    userName: 'luisrojas',
+    categoryName: 'Blackwork',
+    studioName: 'Ink Master',
+  },
+  {
+    content: 'Rosa minimalista en línea fina para antebrazo',
+    imageUrl: '/images/posts/rosa-fine-line.jpg',
+    title: 'Rosa Fine Line',
+    priceMin: 40,
+    priceMax: 70,
+    userName: 'dianacruz',
+    categoryName: 'Fine Line',
+    studioName: 'Fine Line Studio',
+  },
+  {
+    content: 'Retrato realista de Marilyn Monroe en escala de grises',
+    imageUrl: '/images/posts/marilyn-realismo.jpg',
+    title: 'Retrato Marilyn Monroe',
+    priceMin: 120,
+    priceMax: 200,
+    userName: 'pablogil',
+    categoryName: 'Realismo',
+    studioName: 'Real Ink Tattoo',
+  },
+  {
+    content: 'Mandala geométrico en el centro de la espalda',
+    imageUrl: '/images/posts/mandala-geometrico.jpg',
+    title: 'Mandala Geométrico',
+    priceMin: 60,
+    priceMax: 100,
+    userName: 'luisrojas',
+    categoryName: 'Geométrico',
+    studioName: 'Black House Tattoo',
+  },
+  {
+    content: 'Explosión de acuarela con colores pastel y flores',
+    imageUrl: '/images/posts/acuarela-floral.jpg',
+    title: 'Acuarela Floral',
+    priceMin: 50,
+    priceMax: 90,
+    userName: 'sofiatoro',
+    categoryName: 'Acuarela',
+    studioName: 'Neo Art Studio',
+  },
+  {
+    content: 'Ancla tradicional old school con detalles neotradicionales',
+    imageUrl: '/images/posts/ancla-tradicional.jpg',
+    title: 'Ancla Tradicional',
+    priceMin: 30,
+    priceMax: 60,
+    userName: 'dianacruz',
+    categoryName: 'Neotradicional',
+    studioName: 'Mini Tattoo Cali',
+  },
+  {
+    content: 'Lobo siberiano realista en el muslo',
+    imageUrl: '/images/posts/lobo-realismo.jpg',
+    title: 'Lobo Realista',
+    priceMin: 90,
+    priceMax: 160,
+    userName: 'pablogil',
+    categoryName: 'Realismo',
+    studioName: 'Real Ink Tattoo',
+  },
+  {
+    content: 'Plumas finas y delicadas en línea fina',
+    imageUrl: '/images/posts/plumas-fine-line.jpg',
+    title: 'Plumas Fine Line',
+    priceMin: 35,
+    priceMax: 65,
+    userName: 'sofiatoro',
+    categoryName: 'Fine Line',
+    studioName: 'Ink Starter Studio',
+  },
+];
 
 @Injectable()
-export class PostService {
+export class PostService implements OnModuleInit {
   private readonly logger = new Logger(PostService.name);
 
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
+    @InjectRepository(PostLike)
+    private readonly postLikeRepository: Repository<PostLike>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Studio)
+    private readonly studioRepository: Repository<Studio>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
     private readonly categoryService: CategoryService,
   ) {}
 
+  async onModuleInit() {
+    const count = await this.postRepository.count();
+    if (count > 0) return;
+    const users = await this.userRepository.find();
+    const studios = await this.studioRepository.find();
+    const categories = await this.categoryRepository.find();
+    if (users.length === 0 || categories.length === 0) return;
+    const posts = SEED_POSTS.map((p) => ({
+      ...p,
+      user: users.find((u) => u.username === p.userName),
+      studio: studios.find((s) => s.name === p.studioName),
+      category: categories.find((c) => c.name === p.categoryName),
+    }));
+    const cleaned = posts.map(({ userName, categoryName, studioName, ...rest }) => rest);
+    await this.postRepository.save(cleaned);
+  }
+
   private readonly defaultRelations = ['user', 'category', 'likes', 'comments'];
+
+  private async attachLikedByUser(posts: Post[], userId?: number): Promise<Post[]> {
+    if (!userId) return posts.map(p => ({ ...p, likedByCurrentUser: false } as any));
+    const postIds = posts.map(p => p.id);
+    const likes = await this.postLikeRepository.find({
+      where: { user: { id: userId }, post: { id: In(postIds) } },
+      relations: ['post'],
+    });
+    const likedIds = new Set(likes.map(l => l.post.id));
+    return posts.map(p => ({ ...p, likedByCurrentUser: likedIds.has(p.id) } as any));
+  }
 
   async create(createPost: CreatePost, userId: number): Promise<Post> {
     const { category: categoryData, ...postData } = createPost;
@@ -41,9 +164,18 @@ export class PostService {
     return await this.postRepository.save(newPost);
   }
 
-  async findMyPosts(userId: number): Promise<Post[]> {
-    return await this.postRepository.find({
+  async findMyPosts(userId: number, currentUserId?: number): Promise<Post[]> {
+    const posts = await this.postRepository.find({
       where: { user: { id: userId } },
+      relations: this.defaultRelations,
+      order: { createdAt: 'DESC' },
+    });
+    return this.attachLikedByUser(posts, currentUserId || userId);
+  }
+
+  async findByStudio(studioId: number): Promise<Post[]> {
+    return await this.postRepository.find({
+      where: { studio: { id: studioId } },
       relations: this.defaultRelations,
       order: { createdAt: 'DESC' },
     });
@@ -52,20 +184,22 @@ export class PostService {
   async findAll(
     sort?: string,
     category?: string,
-    userId?: number,
+    filterUserId?: number,
+    currentUserId?: number,
   ): Promise<Post[]> {
     const where: any = {};
     if (category) where.category = { name: category };
-    if (userId) where.user = { id: userId };
+    if (filterUserId) where.user = { id: filterUserId };
 
-    return await this.postRepository.find({
+    const posts = await this.postRepository.find({
       where,
       relations: this.defaultRelations,
       order: { createdAt: 'DESC' },
     });
+    return this.attachLikedByUser(posts, currentUserId);
   }
 
-  async findById(id: number): Promise<Post> {
+  async findById(id: number, currentUserId?: number): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { id },
       relations: this.defaultRelations,
@@ -74,28 +208,32 @@ export class PostService {
     if (!post) {
       throw new NotFoundException(`Post con ID ${id} no encontrado`);
     }
-    return post;
+    const enriched = await this.attachLikedByUser([post], currentUserId);
+    return enriched[0];
   }
 
-  async findRecent(): Promise<Post[]> {
-    return await this.postRepository.find({
+  async findRecent(currentUserId?: number): Promise<Post[]> {
+    const posts = await this.postRepository.find({
       relations: this.defaultRelations,
       order: { createdAt: 'DESC' },
     });
+    return this.attachLikedByUser(posts, currentUserId);
   }
 
-  async findPopular(): Promise<Post[]> {
+  async findPopular(currentUserId?: number): Promise<Post[]> {
     const posts = await this.postRepository.find({
       relations: this.defaultRelations,
     });
-    return posts.sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0));
+    const sorted = posts.sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0));
+    return this.attachLikedByUser(sorted, currentUserId);
   }
 
-  async findViral(): Promise<Post[]> {
+  async findViral(currentUserId?: number): Promise<Post[]> {
     const posts = await this.postRepository.find({
       relations: this.defaultRelations,
     });
-    return posts.sort((a, b) => (b.comments?.length ?? 0) - (a.comments?.length ?? 0));
+    const sorted = posts.sort((a, b) => (b.comments?.length ?? 0) - (a.comments?.length ?? 0));
+    return this.attachLikedByUser(sorted, currentUserId);
   }
 
   async update(id: number, updatePost: UpdatePost): Promise<Post> {
@@ -121,6 +259,7 @@ export class PostService {
     minPrice: number,
     maxPrice: number,
     sort?: string,
+    currentUserId?: number,
   ): Promise<Post[]> {
     const query = this.postRepository
       .createQueryBuilder('post')
@@ -141,7 +280,8 @@ export class PostService {
       query.orderBy('post.createdAt', 'DESC');
     }
 
-    return await query.getMany();
+    const posts = await query.getMany();
+    return this.attachLikedByUser(posts, currentUserId);
   }
 
   async remove(id: number, userId: number): Promise<{ message: string; id: number }> {

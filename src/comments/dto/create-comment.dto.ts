@@ -1,3 +1,4 @@
 export class CreateComment {
-  text: string;
+  postId: number;
+  content: string;
 }

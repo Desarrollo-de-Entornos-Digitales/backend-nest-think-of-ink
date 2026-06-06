@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Post } from '../posts/post.entity';
@@ -20,8 +21,11 @@ export class Comment {
   post: Post;
 
   @Column('text')
-  text: string;
+  content: string;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
