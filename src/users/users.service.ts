@@ -141,18 +141,21 @@ export class UsersService implements OnModuleInit {
     });
     if (!user) return null;
     return {
-      avatarUrl: user.avatarUrl,
-      username: user.username,
-      fullName: user.fullName,
-      profession: user.profession,
-      bio: user.bio,
-      website: user.website,
-      instagram: user.instagram,
-      behance: user.behance,
-      portfolio: user.portfolio,
-      followersCount: user.followersCount,
-      followingCount: user.followingCount,
-      postsCount: user.posts?.length ?? 0,
+      user: {
+        id: user.id,
+        username: user.username,
+        fullName: user.fullName,
+        profileImage: user.avatarUrl,
+        bio: user.bio,
+        profession: user.profession,
+        location: user.location || user.city,
+        instagram: user.instagram,
+        behance: user.behance,
+        portfolio: user.portfolio,
+        followersCount: user.followersCount,
+        followingCount: user.followingCount,
+        postsCount: user.posts?.length ?? 0,
+      },
       posts: user.posts,
     };
   }

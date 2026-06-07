@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { commentService } from './comment.service';
@@ -24,7 +25,11 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createCommentDto: CreateComment, @Req() req: RequestWithUser) {
+  create(
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    createCommentDto: CreateComment,
+    @Req() req: RequestWithUser,
+  ) {
     return this.commentService.create(createCommentDto, req.user.id);
   }
 

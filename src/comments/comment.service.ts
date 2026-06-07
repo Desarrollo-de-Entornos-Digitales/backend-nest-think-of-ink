@@ -25,10 +25,6 @@ export class commentService {
   ) {}
 
   async create(createComment: CreateComment, userId: number) {
-    if (!createComment.content || !createComment.content.trim()) {
-      throw new BadRequestException('El contenido del comentario es obligatorio');
-    }
-
     const post = await this.postRepository.findOne({ where: { id: createComment.postId } });
     if (!post) {
       throw new NotFoundException(`Post ${createComment.postId} no encontrado`);
@@ -43,10 +39,11 @@ export class commentService {
     try {
       const newComment = this.commentRepository.create(data);
       const saved = await this.commentRepository.save(newComment) as unknown as Comment;
-      return await this.commentRepository.findOne({
+      const comment = await this.commentRepository.findOne({
         where: { id: saved.id },
         relations: ['user'],
       });
+      return this.stripPassword(comment);
     } catch (error) {
       this.logger.error(`Error al crear comentario: ${error.message}`, error.stack);
       throw error;
@@ -54,11 +51,22 @@ export class commentService {
   }
 
   async findByPost(postId: number) {
-    return await this.commentRepository.find({
+    const comments = await this.commentRepository.find({
       where: { post: { id: postId } },
       relations: ['user'],
       order: { createdAt: 'DESC' },
     });
+    return comments.map((c) => this.stripPassword(c));
+  }
+
+  private stripPassword(comment: Comment | null): any {
+    if (!comment) return comment;
+    const { user, ...rest } = comment as any;
+    if (user) {
+      const { password, ...safeUser } = user;
+      return { ...rest, user: safeUser };
+    }
+    return rest;
   }
 
   async remove(id: number, userId: number) {
