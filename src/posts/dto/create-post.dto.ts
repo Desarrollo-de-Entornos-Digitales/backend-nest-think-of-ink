@@ -3,7 +3,7 @@ export class CreatePost {
   content: string;
   category?: { name: string };
   location: string;
-  imageUrl: string;
+  imageUrl?: string;
   postType: string;
   priceMin?: number;
   priceMax?: number;

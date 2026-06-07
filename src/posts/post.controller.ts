@@ -8,10 +8,15 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
   Req,
   Query,
   BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
 import { Request } from 'express';
 import { PostService } from './post.service';
 import { CreatePost } from './dto/create-post.dto';
@@ -146,8 +151,43 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createPostDto: CreatePost, @Req() req: RequestWithUser) {
-    return this.postService.create(createPostDto, req.user.id);
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: join(__dirname, '..', '..', 'uploads', 'posts'),
+        filename: (_req, file, callback) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = extname(file.originalname).toLowerCase();
+          callback(null, `${uniqueSuffix}${ext}`);
+        },
+      }),
+      limits: { fileSize: 10 * 1024 * 1024 },
+      fileFilter: (_req, file, callback) => {
+        const allowed = ['.jpg', '.jpeg', '.png', '.webp'];
+        const ext = extname(file.originalname).toLowerCase();
+        if (!allowed.includes(ext)) {
+          return callback(new BadRequestException('Solo se permiten archivos jpg, jpeg, png o webp'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  create(
+    @Body() body: any,
+    @UploadedFile() file: any,
+    @Req() req: RequestWithUser,
+  ) {
+    const imageUrl = file ? `/uploads/posts/${file.filename}` : undefined;
+    const createPostDto: CreatePost = {
+      title: body.title,
+      content: body.content,
+      location: body.location,
+      postType: body.postType,
+      category: body.category ? { name: body.category } : undefined,
+      priceMin: body.priceMin ? Number(body.priceMin) : undefined,
+      priceMax: body.priceMax ? Number(body.priceMax) : undefined,
+    };
+    return this.postService.create(createPostDto, req.user.id, imageUrl);
   }
 
   @UseGuards(JwtAuthGuard)

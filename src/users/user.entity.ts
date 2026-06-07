@@ -15,82 +15,82 @@ import { Rating } from '../ratings/rating.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  username: string;
+  username!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @Column({ nullable: true })
-  fullName: string;
+  fullName!: string;
 
   @Column({ nullable: true })
-  profession: string;
+  profession!: string;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description!: string;
 
   @Column({ nullable: true })
-  city: string;
+  city!: string;
 
   @Column({ nullable: true })
-  website: string;
+  website!: string;
 
   @Column({ nullable: true })
-  linkedin: string;
+  linkedin!: string;
 
   @Column({ nullable: true })
-  instagram: string;
+  instagram!: string;
 
   @Column({ nullable: true })
-  behance: string;
+  behance!: string;
 
   @Column({ nullable: true })
-  portfolio: string;
+  portfolio!: string;
 
   @Column({ nullable: true, type: 'text' })
-  bio: string;
+  bio!: string;
 
   @Column({ nullable: true })
-  avatarUrl: string;
+  avatarUrl!: string;
 
   @Column({ nullable: true })
-  location: string;
+  location!: string;
 
   @Column({ default: 0 })
-  followersCount: number;
+  followersCount!: number;
 
   @Column({ default: 0 })
-  followingCount: number;
+  followingCount!: number;
 
   // RELACIÓN CON POSTS
   @OneToMany(() => Post, (post) => post.user)
-  posts: Post[];
+  posts!: Post[];
 
   // RELACIÓN CON COMMENTS
   @OneToMany(() => Comment, (comment) => comment.user)
-  comments: Comment[];
+  comments!: Comment[];
 
   // RELACIÓN CON ROLE
   @ManyToOne(() => Role, (role) => role.users)
-  role: Role;
+  role!: Role;
 
   // RATINGS QUE EL USUARIO DA
   @OneToMany(() => Rating, (rating) => rating.emitter)
-  ratingsGiven: Rating[];
+  ratingsGiven!: Rating[];
 
   // RATINGS QUE EL USUARIO RECIBE
   @OneToMany(() => Rating, (rating) => rating.receiver)
-  ratingsReceived: Rating[];
+  ratingsReceived!: Rating[];
 }

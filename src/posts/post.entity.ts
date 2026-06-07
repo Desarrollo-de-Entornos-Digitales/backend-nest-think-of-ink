@@ -25,7 +25,7 @@ export class Post {
   content: string;
 
   @Column({ nullable: true })
-  imageUrl: string;
+  imageUrl?: string;
 
   @Column({ nullable: true })
   title: string;

@@ -59,7 +59,7 @@ describe('UsersService', () => {
   // --- PRUEBA: FIND BY EMAIL ---
   describe('findByEmail', () => {
     it('debe retornar un usuario si el email coincide', async () => {
-      const email = 'test@gmail.com';
+      const email = 'test@gmail.com';    
       const mockUser = { id: 1, email };
       mockUserRepository.findOne.mockResolvedValue(mockUser);
 
@@ -69,8 +69,7 @@ describe('UsersService', () => {
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { email } });
     });
   });
-
-  // --- PRUEBA: FIND ALL ---
+  
   describe('findAll', () => {
     it('debe retornar una lista de usuarios', async () => {
       const users = [{ id: 1, email: 'a@a.com' }];
@@ -127,5 +126,5 @@ describe('UsersService', () => {
 });
 
 export {
-  UsersService // 1. MOCK DEL REPOSITORIO DE USUARIOS
+  UsersService 
 };

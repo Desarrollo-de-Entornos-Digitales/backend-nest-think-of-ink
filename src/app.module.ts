@@ -3,6 +3,8 @@ import { Role_perm } from './role_perm/role_perm/role_perm.entity';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 import { User } from './users/user.entity';
 import { Role } from './roles/role.entity';
@@ -40,6 +42,11 @@ import { LikesModule } from './likes/likes.module';
       entities: [User, Role, Post, Comment, Rating, Category, Permission, Role_perm, PostLike, Studio],
       synchronize: process.env.DB_SYNCHRONIZE !== 'false',
       ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+    }),
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
     }),
 
     UsersModule,

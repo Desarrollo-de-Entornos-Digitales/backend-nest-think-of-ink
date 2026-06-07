@@ -14,7 +14,7 @@ import { Category } from '../category/category.entity';
 const SEED_POSTS = [
   {
     content: 'Dragon negro estilo japonés cubriendo todo el brazo',
-    imageUrl: '/images/posts/dragon-blackwork.jpg',
+    imageUrl: undefined,
     title: 'Dragón Japonés Blackwork',
     priceMin: 80,
     priceMax: 150,
@@ -24,7 +24,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Rosa minimalista en línea fina para antebrazo',
-    imageUrl: '/images/posts/rosa-fine-line.jpg',
+    imageUrl: undefined,
     title: 'Rosa Fine Line',
     priceMin: 40,
     priceMax: 70,
@@ -34,7 +34,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Retrato realista de Marilyn Monroe en escala de grises',
-    imageUrl: '/images/posts/marilyn-realismo.jpg',
+    imageUrl: undefined,
     title: 'Retrato Marilyn Monroe',
     priceMin: 120,
     priceMax: 200,
@@ -44,7 +44,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Mandala geométrico en el centro de la espalda',
-    imageUrl: '/images/posts/mandala-geometrico.jpg',
+    imageUrl: undefined,
     title: 'Mandala Geométrico',
     priceMin: 60,
     priceMax: 100,
@@ -54,7 +54,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Explosión de acuarela con colores pastel y flores',
-    imageUrl: '/images/posts/acuarela-floral.jpg',
+    imageUrl: undefined,
     title: 'Acuarela Floral',
     priceMin: 50,
     priceMax: 90,
@@ -64,7 +64,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Ancla tradicional old school con detalles neotradicionales',
-    imageUrl: '/images/posts/ancla-tradicional.jpg',
+    imageUrl: undefined,
     title: 'Ancla Tradicional',
     priceMin: 30,
     priceMax: 60,
@@ -74,7 +74,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Lobo siberiano realista en el muslo',
-    imageUrl: '/images/posts/lobo-realismo.jpg',
+    imageUrl: undefined,
     title: 'Lobo Realista',
     priceMin: 90,
     priceMax: 160,
@@ -84,7 +84,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Plumas finas y delicadas en línea fina',
-    imageUrl: '/images/posts/plumas-fine-line.jpg',
+    imageUrl: undefined,
     title: 'Plumas Fine Line',
     priceMin: 35,
     priceMax: 65,
@@ -142,11 +142,12 @@ export class PostService implements OnModuleInit {
     return posts.map(p => ({ ...p, likedByCurrentUser: likedIds.has(p.id) } as any));
   }
 
-  async create(createPost: CreatePost, userId: number): Promise<Post> {
+  async create(createPost: CreatePost, userId: number, imageUrl?: string): Promise<Post> {
     const { category: categoryData, ...postData } = createPost;
 
     const newPost = this.postRepository.create({
       ...postData,
+      imageUrl,
       user: { id: userId },
     });
 
