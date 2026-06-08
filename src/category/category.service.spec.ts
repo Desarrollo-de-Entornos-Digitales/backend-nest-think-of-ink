@@ -111,7 +111,9 @@ describe('CategoryService', () => {
     it('debe lanzar NotFoundException si ninguna categoría fue afectada', async () => {
       mockCategoryRepository.delete.mockResolvedValue({ affected: 0 });
 
-      await expect(service.remove(999)).rejects.toThrow('Categoría 999 no existe');
+      await expect(service.remove(999)).rejects.toThrow(
+        'Categoría 999 no existe',
+      );
     });
   });
 });

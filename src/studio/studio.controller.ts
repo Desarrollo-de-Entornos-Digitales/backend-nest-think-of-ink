@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, ParseIntPipe } from '@nestjs/common';
 import { StudioService } from './studio.service';
 import { PostService } from '../posts/post.service';
 
@@ -21,10 +15,7 @@ export class StudioController {
   }
 
   @Get('price-range')
-  findByPriceRange(
-    @Query('min') min?: string,
-    @Query('max') max?: string,
-  ) {
+  findByPriceRange(@Query('min') min?: string, @Query('max') max?: string) {
     return this.studioService.findByPriceRange(
       min ? parseFloat(min) : 0,
       max ? parseFloat(max) : Number.MAX_SAFE_INTEGER,

@@ -34,19 +34,45 @@ import { LikesModule } from './likes/likes.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      host: process.env.DATABASE_URL ? undefined : process.env.DB_HOST ?? 'localhost',
-      port: process.env.DATABASE_URL ? undefined : Number(process.env.DB_PORT ?? 5433),
-      username: process.env.DATABASE_URL ? undefined : process.env.DB_USER ?? 'postgres',
-      password: process.env.DATABASE_URL ? undefined : process.env.DB_PASSWORD ?? 'postgres',
-      database: process.env.DATABASE_URL ? undefined : process.env.DB_NAME ?? 'mydatabase',
-      entities: [User, Role, Post, Comment, Rating, Category, Permission, Role_perm, PostLike, Studio],
+      host: process.env.DATABASE_URL
+        ? undefined
+        : (process.env.DB_HOST ?? 'localhost'),
+      port: process.env.DATABASE_URL
+        ? undefined
+        : Number(process.env.DB_PORT ?? 5433),
+      username: process.env.DATABASE_URL
+        ? undefined
+        : (process.env.DB_USER ?? 'postgres'),
+      password: process.env.DATABASE_URL
+        ? undefined
+        : (process.env.DB_PASSWORD ?? 'postgres'),
+      database: process.env.DATABASE_URL
+        ? undefined
+        : (process.env.DB_NAME ?? 'mydatabase'),
+      entities: [
+        User,
+        Role,
+        Post,
+        Comment,
+        Rating,
+        Category,
+        Permission,
+        Role_perm,
+        PostLike,
+        Studio,
+      ],
       synchronize: process.env.DB_SYNCHRONIZE !== 'false',
-      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+      ssl:
+        process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
     }),
 
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads', 'avatars'),
+      serveRoot: '/uploads/avatars',
     }),
 
     UsersModule,

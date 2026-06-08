@@ -52,7 +52,12 @@ export class PostController {
     @Query('category') category?: string,
     @Query('userId') userId?: string,
   ) {
-    return this.postService.findAll(sort, category, userId ? +userId : undefined, req.user?.id);
+    return this.postService.findAll(
+      sort,
+      category,
+      userId ? +userId : undefined,
+      req.user?.id,
+    );
   }
 
   // --- CATEGORÍAS (endpoints fijos antes de :id) ---
@@ -119,7 +124,10 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id/likes')
-  getLikesInfo(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+  getLikesInfo(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+  ) {
     return this.likesService.getLikesInfo(req.user.id, id);
   }
 
@@ -156,7 +164,8 @@ export class PostController {
       storage: diskStorage({
         destination: join(__dirname, '..', '..', 'uploads', 'posts'),
         filename: (_req, file, callback) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname).toLowerCase();
           callback(null, `${uniqueSuffix}${ext}`);
         },
@@ -166,7 +175,12 @@ export class PostController {
         const allowed = ['.jpg', '.jpeg', '.png', '.webp'];
         const ext = extname(file.originalname).toLowerCase();
         if (!allowed.includes(ext)) {
-          return callback(new BadRequestException('Solo se permiten archivos jpg, jpeg, png o webp'), false);
+          return callback(
+            new BadRequestException(
+              'Solo se permiten archivos jpg, jpeg, png o webp',
+            ),
+            false,
+          );
         }
         callback(null, true);
       },
@@ -192,7 +206,10 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updatePostDto: UpdatePost) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePostDto: UpdatePost,
+  ) {
     return this.postService.update(id, updatePostDto);
   }
 

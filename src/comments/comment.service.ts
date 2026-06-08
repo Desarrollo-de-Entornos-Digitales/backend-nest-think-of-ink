@@ -25,7 +25,9 @@ export class commentService {
   ) {}
 
   async create(createComment: CreateComment, userId: number) {
-    const post = await this.postRepository.findOne({ where: { id: createComment.postId } });
+    const post = await this.postRepository.findOne({
+      where: { id: createComment.postId },
+    });
     if (!post) {
       throw new NotFoundException(`Post ${createComment.postId} no encontrado`);
     }
@@ -38,14 +40,19 @@ export class commentService {
 
     try {
       const newComment = this.commentRepository.create(data);
-      const saved = await this.commentRepository.save(newComment) as unknown as Comment;
+      const saved = (await this.commentRepository.save(
+        newComment,
+      )) as unknown as Comment;
       const comment = await this.commentRepository.findOne({
         where: { id: saved.id },
         relations: ['user'],
       });
       return this.stripPassword(comment);
     } catch (error) {
-      this.logger.error(`Error al crear comentario: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al crear comentario: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -78,7 +85,9 @@ export class commentService {
       throw new NotFoundException(`Comentario ${id} no encontrado`);
     }
     if (comment.user.id !== userId) {
-      throw new ForbiddenException('No tienes permiso para eliminar este comentario');
+      throw new ForbiddenException(
+        'No tienes permiso para eliminar este comentario',
+      );
     }
     await this.commentRepository.delete(id);
     return { id };

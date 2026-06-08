@@ -6,6 +6,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  AfterLoad,
 } from 'typeorm';
 import { Post } from '../posts/post.entity';
 import { Comment } from '../comments/comment.entity';
@@ -67,6 +68,13 @@ export class User {
 
   @Column({ nullable: true })
   location!: string;
+
+  profileImage!: string | null;
+
+  @AfterLoad()
+  setProfileImage() {
+    this.profileImage = this.avatarUrl;
+  }
 
   @Column({ default: 0 })
   followersCount!: number;

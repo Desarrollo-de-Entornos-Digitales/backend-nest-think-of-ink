@@ -21,13 +21,19 @@ export class LikesController {
 
   @UseGuards(JwtAuthGuard)
   @Post(':postId')
-  toggle(@Param('postId', ParseIntPipe) postId: number, @Req() req: RequestWithUser) {
+  toggle(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Req() req: RequestWithUser,
+  ) {
     return this.likesService.like(req.user.id, postId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('post/:postId')
-  getLikesInfo(@Param('postId', ParseIntPipe) postId: number, @Req() req: RequestWithUser) {
+  getLikesInfo(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Req() req: RequestWithUser,
+  ) {
     return this.likesService.getLikesInfo(req.user.id, postId);
   }
 }

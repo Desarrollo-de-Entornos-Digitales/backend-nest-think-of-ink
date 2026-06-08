@@ -1,4 +1,10 @@
-import { Injectable, OnModuleInit, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  NotFoundException,
+  ForbiddenException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 
@@ -125,24 +131,36 @@ export class PostService implements OnModuleInit {
       studio: studios.find((s) => s.name === p.studioName),
       category: categories.find((c) => c.name === p.categoryName),
     }));
-    const cleaned = posts.map(({ userName, categoryName, studioName, ...rest }) => rest);
+    const cleaned = posts.map(
+      ({ userName, categoryName, studioName, ...rest }) => rest,
+    );
     await this.postRepository.save(cleaned);
   }
 
   private readonly defaultRelations = ['user', 'category', 'likes', 'comments'];
 
-  private async attachLikedByUser(posts: Post[], userId?: number): Promise<Post[]> {
-    if (!userId) return posts.map(p => ({ ...p, likedByCurrentUser: false } as any));
-    const postIds = posts.map(p => p.id);
+  private async attachLikedByUser(
+    posts: Post[],
+    userId?: number,
+  ): Promise<Post[]> {
+    if (!userId)
+      return posts.map((p) => ({ ...p, likedByCurrentUser: false }) as any);
+    const postIds = posts.map((p) => p.id);
     const likes = await this.postLikeRepository.find({
       where: { user: { id: userId }, post: { id: In(postIds) } },
       relations: ['post'],
     });
-    const likedIds = new Set(likes.map(l => l.post.id));
-    return posts.map(p => ({ ...p, likedByCurrentUser: likedIds.has(p.id) } as any));
+    const likedIds = new Set(likes.map((l) => l.post.id));
+    return posts.map(
+      (p) => ({ ...p, likedByCurrentUser: likedIds.has(p.id) }) as any,
+    );
   }
 
-  async create(createPost: CreatePost, userId: number, imageUrl?: string): Promise<Post> {
+  async create(
+    createPost: CreatePost,
+    userId: number,
+    imageUrl?: string,
+  ): Promise<Post> {
     const { category: categoryData, ...postData } = createPost;
 
     const newPost = this.postRepository.create({
@@ -225,7 +243,9 @@ export class PostService implements OnModuleInit {
     const posts = await this.postRepository.find({
       relations: this.defaultRelations,
     });
-    const sorted = posts.sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0));
+    const sorted = posts.sort(
+      (a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0),
+    );
     return this.attachLikedByUser(sorted, currentUserId);
   }
 
@@ -233,7 +253,9 @@ export class PostService implements OnModuleInit {
     const posts = await this.postRepository.find({
       relations: this.defaultRelations,
     });
-    const sorted = posts.sort((a, b) => (b.comments?.length ?? 0) - (a.comments?.length ?? 0));
+    const sorted = posts.sort(
+      (a, b) => (b.comments?.length ?? 0) - (a.comments?.length ?? 0),
+    );
     return this.attachLikedByUser(sorted, currentUserId);
   }
 
@@ -285,7 +307,10 @@ export class PostService implements OnModuleInit {
     return this.attachLikedByUser(posts, currentUserId);
   }
 
-  async remove(id: number, userId: number): Promise<{ message: string; id: number }> {
+  async remove(
+    id: number,
+    userId: number,
+  ): Promise<{ message: string; id: number }> {
     const post = await this.postRepository.findOne({
       where: { id },
       relations: ['user'],
@@ -295,7 +320,9 @@ export class PostService implements OnModuleInit {
       throw new NotFoundException(`Post ${id} no encontrado`);
     }
     if (post.user.id !== userId) {
-      throw new ForbiddenException('No tienes permiso para eliminar esta publicación');
+      throw new ForbiddenException(
+        'No tienes permiso para eliminar esta publicación',
+      );
     }
 
     await this.postRepository.delete(id);

@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 
@@ -35,6 +39,8 @@ export class AuthService {
         id: user.id,
         username: user.username,
         email: user.email,
+        avatarUrl: user.avatarUrl,
+        profileImage: user.avatarUrl,
       },
     };
   }
@@ -62,6 +68,8 @@ export class AuthService {
         id: newUser.id,
         username: newUser.username,
         email: newUser.email,
+        avatarUrl: newUser.avatarUrl,
+        profileImage: newUser.avatarUrl,
       },
     };
   }

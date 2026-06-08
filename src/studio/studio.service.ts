@@ -133,7 +133,11 @@ export class StudioService implements OnModuleInit {
     });
   }
 
-  async findByLocation(city?: string, lat?: number, lng?: number): Promise<Studio[]> {
+  async findByLocation(
+    city?: string,
+    lat?: number,
+    lng?: number,
+  ): Promise<Studio[]> {
     if (city) {
       return this.studioRepository.find({
         where: { city },
@@ -147,7 +151,7 @@ export class StudioService implements OnModuleInit {
           ...s,
           _distance: Math.sqrt(
             Math.pow((s.latitude ?? 0) - lat, 2) +
-            Math.pow((s.longitude ?? 0) - lng, 2),
+              Math.pow((s.longitude ?? 0) - lng, 2),
           ),
         }))
         .sort((a, b) => (a as any)._distance - (b as any)._distance)

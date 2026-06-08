@@ -71,7 +71,7 @@ describe('UsersController', () => {
   describe('findAll', () => {
     it('debe retornar un arreglo de usuarios', async () => {
       const result = await controller.findAll();
-      
+
       expect(result).toEqual([{ id: 1, email: 'test@test.com' }]);
       expect(service.findAll).toHaveBeenCalled();
     });
@@ -80,7 +80,7 @@ describe('UsersController', () => {
   // --- TEST: FIND BY ID ---
   describe('findOne', () => {
     it('debe retornar un usuario por su ID', async () => {
-      const id = "1";
+      const id = '1';
       const result = await controller.findById(+id);
 
       expect(result).toEqual({ id: 1, username: 'testuser' });
@@ -91,9 +91,9 @@ describe('UsersController', () => {
   // --- TEST: REMOVE ---
   describe('remove', () => {
     it('debe llamar al servicio para eliminar un usuario', async () => {
-      const id = "1";
+      const id = '1';
       await controller.remove(+id);
-      
+
       expect(service.remove).toHaveBeenCalledWith(1);
     });
   });

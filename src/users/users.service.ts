@@ -51,9 +51,20 @@ const SEED_USERS = [
 const URL_FIELDS = ['linkedin', 'instagram', 'behance', 'portfolio', 'website'];
 
 const ALLOWED_PROFILE_FIELDS = [
-  'fullName', 'username', 'profession', 'description', 'email',
-  'website', 'city', 'linkedin', 'behance', 'instagram', 'portfolio',
-  'bio', 'avatarUrl', 'location',
+  'fullName',
+  'username',
+  'profession',
+  'description',
+  'email',
+  'website',
+  'city',
+  'linkedin',
+  'behance',
+  'instagram',
+  'portfolio',
+  'bio',
+  'avatarUrl',
+  'location',
 ];
 
 @Injectable()
@@ -89,14 +100,20 @@ export class UsersService implements OnModuleInit {
 
   async update(id: number, updateUser: any) {
     if (updateUser.description?.length > 500) {
-      throw new BadRequestException('La descripción no puede superar los 500 caracteres');
+      throw new BadRequestException(
+        'La descripción no puede superar los 500 caracteres',
+      );
     }
     if (updateUser.bio?.length > 500) {
-      throw new BadRequestException('La biografía no puede superar los 500 caracteres');
+      throw new BadRequestException(
+        'La biografía no puede superar los 500 caracteres',
+      );
     }
     for (const field of URL_FIELDS) {
       if (updateUser[field] && !/^https?:\/\/.+/.test(updateUser[field])) {
-        throw new BadRequestException(`${field} debe ser una URL válida (http/https)`);
+        throw new BadRequestException(
+          `${field} debe ser una URL válida (http/https)`,
+        );
       }
     }
     const sanitized: any = {};
@@ -109,16 +126,27 @@ export class UsersService implements OnModuleInit {
     return this.userRepository.findOneBy({ id });
   }
 
+  async updateAvatar(id: number, avatarUrl: string) {
+    await this.userRepository.update(id, { avatarUrl });
+    return this.userRepository.findOneBy({ id });
+  }
+
   async remove(id: number) {
     return this.userRepository.delete(id);
   }
 
-  findById(id: number) {
-    return this.userRepository.findOneBy({ id });
+  async findById(id: number) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) return null;
+    return {
+      ...user,
+      profileImage: user.avatarUrl,
+    };
   }
 
-  findAll() {
-    return this.userRepository.find();
+  async findAll() {
+    const users = await this.userRepository.find();
+    return users.map((user) => ({ ...user, profileImage: user.avatarUrl }));
   }
 
   async findProfile(id: number) {
@@ -127,9 +155,11 @@ export class UsersService implements OnModuleInit {
       relations: ['posts'],
     });
     if (!user) return null;
-    const { password, posts, ratingsGiven, ratingsReceived, ...rest } = user as any;
+    const { password, posts, ratingsGiven, ratingsReceived, ...rest } =
+      user as any;
     return {
       ...rest,
+      profileImage: user.avatarUrl,
       postsCount: posts?.length ?? 0,
     };
   }

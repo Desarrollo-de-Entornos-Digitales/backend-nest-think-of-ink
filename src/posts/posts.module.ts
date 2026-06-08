@@ -13,7 +13,13 @@ import { LikesModule } from '../likes/likes.module';
 import { CommentsModule } from '../comments/comments.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, PostLike, User, Studio, Category]), forwardRef(() => AuthModule), CategoryModule, LikesModule, CommentsModule],
+  imports: [
+    TypeOrmModule.forFeature([Post, PostLike, User, Studio, Category]),
+    forwardRef(() => AuthModule),
+    CategoryModule,
+    LikesModule,
+    CommentsModule,
+  ],
   controllers: [PostController],
   providers: [PostService],
   exports: [PostService],

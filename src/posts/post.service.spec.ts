@@ -145,11 +145,13 @@ describe('PostService', () => {
       const result = await service.update(id, dto as any);
 
       expect(result).toMatchObject(updatedPost as any);
-      expect(mockPostRepository.update).toHaveBeenCalledWith(id, { title: 'Título Actualizado' });
+      expect(mockPostRepository.update).toHaveBeenCalledWith(id, {
+        title: 'Título Actualizado',
+      });
     });
   });
 
-    describe('filterByPrice', () => {
+  describe('filterByPrice', () => {
     it('debe retornar posts dentro del rango de precio', async () => {
       const posts = [
         { id: 1, priceMin: 50000, priceMax: 100000 },
@@ -162,7 +164,9 @@ describe('PostService', () => {
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(posts),
       };
-      mockPostRepository.createQueryBuilder = jest.fn().mockReturnValue(mockQueryBuilder);
+      mockPostRepository.createQueryBuilder = jest
+        .fn()
+        .mockReturnValue(mockQueryBuilder);
 
       const result = await service.filterByPrice(50000, 200000, 'price_asc');
       expect(result).toMatchObject(posts as any);
@@ -178,7 +182,9 @@ describe('PostService', () => {
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(posts),
       };
-      mockPostRepository.createQueryBuilder = jest.fn().mockReturnValue(mockQueryBuilder);
+      mockPostRepository.createQueryBuilder = jest
+        .fn()
+        .mockReturnValue(mockQueryBuilder);
 
       const result = await service.filterByPrice(0, 100000);
       expect(result).toMatchObject([]);

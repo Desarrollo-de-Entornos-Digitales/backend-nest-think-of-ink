@@ -60,7 +60,7 @@ describe('RoleService', () => {
     it('debe retornar todos los roles', async () => {
       const roles = [
         { id: 1, name: 'Admin' },
-        { id: 2, name: 'User' }
+        { id: 2, name: 'User' },
       ];
       mockRoleRepository.find.mockResolvedValue(roles);
 

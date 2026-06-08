@@ -41,7 +41,12 @@ describe('ratingService', () => {
   // --- PRUEBA: CREATE ---
   describe('create', () => {
     it('debe registrar una nueva puntuación', async () => {
-      const dto = { score: 5, comment: 'Excelente trabajo', postId: 1, userId: 2 };
+      const dto = {
+        score: 5,
+        comment: 'Excelente trabajo',
+        postId: 1,
+        userId: 2,
+      };
       const savedRating = { id: 1, ...dto };
 
       mockRatingRepository.create.mockReturnValue(dto);
@@ -60,7 +65,7 @@ describe('ratingService', () => {
     it('debe retornar todas las puntuaciones', async () => {
       const ratings = [
         { id: 1, score: 5 },
-        { id: 2, score: 4 }
+        { id: 2, score: 4 },
       ];
       mockRatingRepository.find.mockResolvedValue(ratings);
 

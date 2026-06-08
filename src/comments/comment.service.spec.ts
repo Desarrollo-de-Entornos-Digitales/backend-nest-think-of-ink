@@ -51,7 +51,12 @@ describe('commentService', () => {
     it('debe crear y guardar un nuevo comentario', async () => {
       const dto = { postId: 1, content: '¡Increíble tatuaje!' };
       const userId = 1;
-      const savedComment = { id: 1, content: '¡Increíble tatuaje!', user: { id: 1 }, post: { id: 1 } };
+      const savedComment = {
+        id: 1,
+        content: '¡Increíble tatuaje!',
+        user: { id: 1 },
+        post: { id: 1 },
+      };
 
       mockPostRepository.findOne.mockResolvedValue({ id: 1 });
       mockCommentRepository.create.mockReturnValue(dto);
@@ -93,7 +98,10 @@ describe('commentService', () => {
   // --- PRUEBAS: REMOVE ---
   describe('remove', () => {
     it('debe eliminar el comentario si el usuario es el dueño', async () => {
-      mockCommentRepository.findOne.mockResolvedValue({ id: 1, user: { id: 1 } });
+      mockCommentRepository.findOne.mockResolvedValue({
+        id: 1,
+        user: { id: 1 },
+      });
       mockCommentRepository.delete.mockResolvedValue({ affected: 1 });
 
       const result = await service.remove(1, 1);
@@ -102,7 +110,10 @@ describe('commentService', () => {
     });
 
     it('debe lanzar error si no es el dueño', async () => {
-      mockCommentRepository.findOne.mockResolvedValue({ id: 1, user: { id: 2 } });
+      mockCommentRepository.findOne.mockResolvedValue({
+        id: 1,
+        user: { id: 2 },
+      });
 
       await expect(service.remove(1, 1)).rejects.toThrow();
     });

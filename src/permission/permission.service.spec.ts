@@ -41,7 +41,10 @@ describe('permissionService', () => {
   // --- PRUEBA: CREATE ---
   describe('create', () => {
     it('debe crear y guardar un nuevo permiso', async () => {
-      const dto = { name: 'WRITE_POSTS', description: 'Permite crear nuevos posts' };
+      const dto = {
+        name: 'WRITE_POSTS',
+        description: 'Permite crear nuevos posts',
+      };
       const savedPermission = { id: 1, ...dto };
 
       mockPermissionRepository.create.mockReturnValue(dto);
@@ -60,7 +63,7 @@ describe('permissionService', () => {
     it('debe retornar un arreglo de permisos', async () => {
       const permissions = [
         { id: 1, name: 'READ_POSTS' },
-        { id: 2, name: 'DELETE_POSTS' }
+        { id: 2, name: 'DELETE_POSTS' },
       ];
       mockPermissionRepository.find.mockResolvedValue(permissions);
 
@@ -80,7 +83,9 @@ describe('permissionService', () => {
       const result = await service.findById(1);
 
       expect(result).toEqual(permission);
-      expect(mockPermissionRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+      expect(mockPermissionRepository.findOneBy).toHaveBeenCalledWith({
+        id: 1,
+      });
     });
   });
 

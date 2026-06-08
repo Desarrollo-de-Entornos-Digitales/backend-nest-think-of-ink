@@ -10,8 +10,14 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
 import { UsersService } from './users.service';
 import { PostService } from '../posts/post.service';
 import { UpdateProfile } from './dto/update-profile.dto';
@@ -41,7 +47,10 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('profile')
-  updateProfile(@Body() updateProfileDto: UpdateProfile, @Req() req: RequestWithUser) {
+  updateProfile(
+    @Body() updateProfileDto: UpdateProfile,
+    @Req() req: RequestWithUser,
+  ) {
     return this.userService.update(req.user.id, updateProfileDto);
   }
 
@@ -68,8 +77,48 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Put('me')
-  updateMe(@Body() updateProfileDto: UpdateProfile, @Req() req: RequestWithUser) {
+  updateMe(
+    @Body() updateProfileDto: UpdateProfile,
+    @Req() req: RequestWithUser,
+  ) {
     return this.userService.update(req.user.id, updateProfileDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('avatar')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: join(__dirname, '..', '..', 'uploads', 'avatars'),
+        filename: (_req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = extname(file.originalname).toLowerCase();
+          callback(null, `${uniqueSuffix}${ext}`);
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 },
+      fileFilter: (_req, file, callback) => {
+        const allowed = ['.jpg', '.jpeg', '.png', '.webp'];
+        const ext = extname(file.originalname).toLowerCase();
+        if (!allowed.includes(ext)) {
+          return callback(
+            new BadRequestException(
+              'Solo se permiten archivos jpg, jpeg, png o webp',
+            ),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async uploadAvatar(@UploadedFile() file: any, @Req() req: RequestWithUser) {
+    if (!file) {
+      throw new BadRequestException('No se ha subido ningún archivo');
+    }
+    const avatarUrl = `/uploads/avatars/${file.filename}`;
+    return this.userService.updateAvatar(req.user.id, avatarUrl);
   }
 
   @Post()
