@@ -20,7 +20,7 @@ import { Category } from '../category/category.entity';
 const SEED_POSTS = [
   {
     content: 'Dragon negro estilo japonés cubriendo todo el brazo',
-    imageUrl: undefined,
+    imageUrl: '/images/tattoos/tattoo-1.jpg',
     title: 'Dragón Japonés Blackwork',
     priceMin: 80,
     priceMax: 150,
@@ -30,7 +30,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Rosa minimalista en línea fina para antebrazo',
-    imageUrl: undefined,
+    imageUrl: '/images/tattoos/tattoo-10.jpg',
     title: 'Rosa Fine Line',
     priceMin: 40,
     priceMax: 70,
@@ -40,7 +40,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Retrato realista de Marilyn Monroe en escala de grises',
-    imageUrl: undefined,
+    imageUrl: '/images/tattoos/tattoo-7.jpg',
     title: 'Retrato Marilyn Monroe',
     priceMin: 120,
     priceMax: 200,
@@ -50,7 +50,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Mandala geométrico en el centro de la espalda',
-    imageUrl: undefined,
+    imageUrl: '/images/tattoos/tattoo-2.jpg',
     title: 'Mandala Geométrico',
     priceMin: 60,
     priceMax: 100,
@@ -60,7 +60,7 @@ const SEED_POSTS = [
   },
   {
     content: 'Explosión de acuarela con colores pastel y flores',
-    imageUrl: undefined,
+    imageUrl: '/images/tattoos/tattoo-6.jpg',
     title: 'Acuarela Floral',
     priceMin: 50,
     priceMax: 90,
