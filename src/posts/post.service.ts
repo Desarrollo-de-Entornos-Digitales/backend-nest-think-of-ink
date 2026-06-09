@@ -245,44 +245,48 @@ export class PostService implements OnModuleInit {
     const existingTitles = new Set(existingPosts.map((p) => p.title));
     const missingPosts = SEED_POSTS.filter((p) => !existingTitles.has(p.title));
 
-    if (missingPosts.length > 0) {
-      const posts = missingPosts.map((p) => ({
+    const allPosts = await this.postRepository.find();
+    const orphanPosts = allPosts.filter((p) => !existingTitles.has(p.title));
+
+    let repurposed = 0;
+    for (let i = 0; i < orphanPosts.length && i < missingPosts.length; i++) {
+      const seedData = missingPosts[i];
+      const orphan = orphanPosts[i];
+      repurposed++;
+      const category = findByCategoryName(seedData.categoryName);
+      const studio = findByStudioName(seedData.studioName);
+      const user = findByUsername(seedData.userName);
+      await this.postRepository.save({
+        id: orphan.id,
+        title: seedData.title,
+        content: seedData.content,
+        imageUrl: seedData.imageUrl,
+        priceMin: seedData.priceMin,
+        priceMax: seedData.priceMax,
+        user,
+        category,
+        studio,
+      });
+    }
+
+    if (missingPosts.length > repurposed) {
+      const remainingPosts = missingPosts.slice(repurposed);
+      const freshPosts = remainingPosts.map((p) => ({
         ...p,
         user: findByUsername(p.userName),
         studio: findByStudioName(p.studioName),
         category: findByCategoryName(p.categoryName),
       }));
-      const cleaned = posts.map(
+      const cleaned = freshPosts.map(
         ({ userName, categoryName, studioName, ...rest }) => rest,
       );
       await this.postRepository.save(cleaned);
     }
 
-    await this.postRepository.delete({
-      title: In([
-        'Ancla Tradicional',
-        'Lobo Realista',
-        'Plumas Fine Line',
-        'Rostro Hiperrealista',
-        'Nombre en Script',
-        'Acuarela paisaje marino',
-        'Neotradicional calavera mexicana',
-        'Blackwork mandala floral',
-        'Realismo retrato canino',
-        'Dragón Japonés Blackwork',
-        'Mandala Geométrico',
-        'Anime Sleeve Completo',
-        'Fénix Realista',
-        'Acuarela Floral',
-        'Retrato Marilyn Monroe',
-        'Diseño Floral Grande',
-        'Geometría Cósmica',
-        'Rosa Fine Line',
-        'Color realismo ave exótica',
-        'Dragón blackwork tradicional',
-        'Arte lineal abstracto',
-      ]),
-    });
+    if (orphanPosts.length > missingPosts.length) {
+      const extraOrphans = orphanPosts.slice(missingPosts.length);
+      await this.postRepository.delete(extraOrphans.map((p) => p.id));
+    }
 
     const allDemoTitles = Object.keys(ALL_DEMO_POST_USER_MAP);
     const allDemoPosts = await this.postRepository.find({
