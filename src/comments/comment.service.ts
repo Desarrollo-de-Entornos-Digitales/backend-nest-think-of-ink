@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 
 import { Comment } from './comment.entity';
 import { Post } from '../posts/post.entity';
+import { User } from '../users/user.entity';
 
 import { CreateComment } from './dto/create-comment.dto';
 
@@ -22,6 +23,8 @@ export class commentService {
     private readonly commentRepository: Repository<Comment>,
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createComment: CreateComment, userId: number) {
@@ -84,7 +87,14 @@ export class commentService {
     if (!comment) {
       throw new NotFoundException(`Comentario ${id} no encontrado`);
     }
-    if (comment.user.id !== userId) {
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['role'],
+    });
+    const isAdmin = user?.role?.name === 'admin';
+
+    if (comment.user.id !== userId && !isAdmin) {
       throw new ForbiddenException(
         'No tienes permiso para eliminar este comentario',
       );

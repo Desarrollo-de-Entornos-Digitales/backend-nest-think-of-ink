@@ -178,6 +178,15 @@ export class PostController {
     return this.commentService.create(createCommentDto, req.user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id/comments/:commentId')
+  deleteComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.commentService.remove(commentId, req.user.id);
+  }
+
   // --- CRUD ---
 
   @UseGuards(JwtAuthGuard)
