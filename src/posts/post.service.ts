@@ -17,6 +17,42 @@ import { User } from '../users/user.entity';
 import { Studio } from '../studio/studio.entity';
 import { Category } from '../category/category.entity';
 
+const SECONDARY_IMAGE_MAP: Record<string, string> = {
+  'Leopardo Realista': '/images/tattoos/tattoo-11.jpg',
+  'Rostro Hiperrealista': '/images/tattoos/tattoo-12.jpg',
+  'Corazón Anatómico': '/images/tattoos/tattoo-13.jpg',
+  'Nombre en Script': '/images/tattoos/tattoo-14.jpg',
+};
+
+const ALL_DEMO_POST_USER_MAP: Record<string, string> = {
+  'Dragón Japonés Blackwork': 'diegorodriguez',
+  'Mandala Geométrico': 'pablogil',
+  'Anime Sleeve Completo': 'sofiatoro',
+  'Fénix Realista': 'luisrojas',
+  'Lettering frase completa en espalda': 'mariagonzalez',
+  'Acuarela Floral': 'dianacruz',
+  'Retrato Marilyn Monroe': 'camilasanchez',
+  'Diseño Floral Grande': 'juanramirez',
+  'Geometría Cósmica': 'diegorodriguez',
+  'Rosa Fine Line': 'mariagonzalez',
+  'Plumas Fine Line': 'juanramirez',
+  'Leopardo Realista': 'luisrojas',
+  'Rostro Hiperrealista': 'camilasanchez',
+  'Corazón Anatómico': 'dianacruz',
+  'Nombre en Script': 'dianacruz',
+};
+
+const DEMO_USERNAMES = [
+  'luisrojas',
+  'dianacruz',
+  'pablogil',
+  'sofiatoro',
+  'diegorodriguez',
+  'mariagonzalez',
+  'camilasanchez',
+  'juanramirez',
+];
+
 const SEED_POSTS = [
   {
     content: 'Dragon negro estilo japonés cubriendo todo el brazo',
@@ -24,29 +60,9 @@ const SEED_POSTS = [
     title: 'Dragón Japonés Blackwork',
     priceMin: 80,
     priceMax: 150,
-    userName: 'luisrojas',
+    userName: 'diegorodriguez',
     categoryName: 'Blackwork',
     studioName: 'Ink Master',
-  },
-  {
-    content: 'Rosa minimalista en línea fina para antebrazo',
-    imageUrl: '/images/tattoos/tattoo-10.jpg',
-    title: 'Rosa Fine Line',
-    priceMin: 40,
-    priceMax: 70,
-    userName: 'dianacruz',
-    categoryName: 'Fine Line',
-    studioName: 'Fine Line Studio',
-  },
-  {
-    content: 'Retrato realista de Marilyn Monroe en escala de grises',
-    imageUrl: '/images/tattoos/tattoo-7.jpg',
-    title: 'Retrato Marilyn Monroe',
-    priceMin: 120,
-    priceMax: 200,
-    userName: 'pablogil',
-    categoryName: 'Realismo',
-    studioName: 'Real Ink Tattoo',
   },
   {
     content: 'Mandala geométrico en el centro de la espalda',
@@ -54,9 +70,39 @@ const SEED_POSTS = [
     title: 'Mandala Geométrico',
     priceMin: 60,
     priceMax: 100,
-    userName: 'luisrojas',
+    userName: 'pablogil',
     categoryName: 'Geométrico',
     studioName: 'Black House Tattoo',
+  },
+  {
+    content: 'Sleeve completo de anime con personajes y acción',
+    imageUrl: '/images/tattoos/tattoo-3.jpg',
+    title: 'Anime Sleeve Completo',
+    priceMin: 120,
+    priceMax: 200,
+    userName: 'sofiatoro',
+    categoryName: 'Neotradicional',
+    studioName: 'Ink Starter Studio',
+  },
+  {
+    content: 'Fénix realista renaciendo entre llamas en el antebrazo',
+    imageUrl: '/images/tattoos/tattoo-4.jpg',
+    title: 'Fénix Realista',
+    priceMin: 100,
+    priceMax: 180,
+    userName: 'luisrojas',
+    categoryName: 'Realismo',
+    studioName: 'Real Ink Tattoo',
+  },
+  {
+    content: 'Frase completa en lettering cursiva a lo largo de la espalda',
+    imageUrl: '/images/tattoos/tattoo-5.jpg',
+    title: 'Lettering frase completa en espalda',
+    priceMin: 50,
+    priceMax: 90,
+    userName: 'mariagonzalez',
+    categoryName: 'Fine Line',
+    studioName: 'Fine Line Studio',
   },
   {
     content: 'Explosión de acuarela con colores pastel y flores',
@@ -64,39 +110,49 @@ const SEED_POSTS = [
     title: 'Acuarela Floral',
     priceMin: 50,
     priceMax: 90,
-    userName: 'sofiatoro',
+    userName: 'dianacruz',
     categoryName: 'Acuarela',
     studioName: 'Neo Art Studio',
   },
   {
-    content: 'Ancla tradicional old school con detalles neotradicionales',
-    imageUrl: undefined,
-    title: 'Ancla Tradicional',
-    priceMin: 30,
-    priceMax: 60,
-    userName: 'dianacruz',
-    categoryName: 'Neotradicional',
-    studioName: 'Mini Tattoo Cali',
-  },
-  {
-    content: 'Lobo siberiano realista en el muslo',
-    imageUrl: undefined,
-    title: 'Lobo Realista',
-    priceMin: 90,
-    priceMax: 160,
-    userName: 'pablogil',
+    content: 'Retrato realista de Marilyn Monroe en escala de grises',
+    imageUrl: '/images/tattoos/tattoo-7.jpg',
+    title: 'Retrato Marilyn Monroe',
+    priceMin: 120,
+    priceMax: 200,
+    userName: 'camilasanchez',
     categoryName: 'Realismo',
     studioName: 'Real Ink Tattoo',
   },
   {
-    content: 'Plumas finas y delicadas en línea fina',
-    imageUrl: undefined,
-    title: 'Plumas Fine Line',
-    priceMin: 35,
-    priceMax: 65,
-    userName: 'sofiatoro',
+    content: 'Diseño floral grande con rosas y girasoles en el muslo',
+    imageUrl: '/images/tattoos/tattoo-8.jpg',
+    title: 'Diseño Floral Grande',
+    priceMin: 70,
+    priceMax: 120,
+    userName: 'juanramirez',
+    categoryName: 'Neotradicional',
+    studioName: 'Mini Tattoo Cali',
+  },
+  {
+    content: 'Geometría cósmica con constelaciones y figuras geométricas',
+    imageUrl: '/images/tattoos/tattoo-9.jpg',
+    title: 'Geometría Cósmica',
+    priceMin: 60,
+    priceMax: 110,
+    userName: 'diegorodriguez',
+    categoryName: 'Geométrico',
+    studioName: 'Black House Tattoo',
+  },
+  {
+    content: 'Rosa minimalista en línea fina para antebrazo',
+    imageUrl: '/images/tattoos/tattoo-10.jpg',
+    title: 'Rosa Fine Line',
+    priceMin: 40,
+    priceMax: 70,
+    userName: 'mariagonzalez',
     categoryName: 'Fine Line',
-    studioName: 'Ink Starter Studio',
+    studioName: 'Fine Line Studio',
   },
 ];
 
@@ -119,22 +175,114 @@ export class PostService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    const count = await this.postRepository.count();
-    if (count > 0) return;
     const users = await this.userRepository.find();
     const studios = await this.studioRepository.find();
     const categories = await this.categoryRepository.find();
     if (users.length === 0 || categories.length === 0) return;
-    const posts = SEED_POSTS.map((p) => ({
-      ...p,
-      user: users.find((u) => u.username === p.userName),
-      studio: studios.find((s) => s.name === p.studioName),
-      category: categories.find((c) => c.name === p.categoryName),
-    }));
-    const cleaned = posts.map(
-      ({ userName, categoryName, studioName, ...rest }) => rest,
+
+    const findByUsername = (u: string) => users.find((x) => x.username === u);
+    const findByStudioName = (s: string) => studios.find((x) => x.name === s);
+    const findByCategoryName = (c: string) =>
+      categories.find((x) => x.name === c);
+
+    const oldAncla = await this.postRepository.findOne({
+      where: { title: 'Ancla Tradicional' },
+    });
+    const animeSeed = SEED_POSTS.find((p) => p.title === 'Anime Sleeve Completo');
+    if (oldAncla && animeSeed) {
+      const newUser = findByUsername(animeSeed.userName);
+      const newStudio = findByStudioName(animeSeed.studioName);
+      const newCategory = findByCategoryName(animeSeed.categoryName);
+      await this.postRepository.save({
+        id: oldAncla.id,
+        content: animeSeed.content,
+        imageUrl: animeSeed.imageUrl,
+        title: animeSeed.title,
+        priceMin: animeSeed.priceMin,
+        priceMax: animeSeed.priceMax,
+        user: newUser,
+        studio: newStudio,
+        category: newCategory,
+      });
+    }
+
+    const demoPostTitles = SEED_POSTS.map((p) => p.title);
+    const existingPosts = await this.postRepository.find({
+      where: { title: In(demoPostTitles) },
+      relations: ['user'],
+    });
+
+    for (const existing of existingPosts) {
+      const seedData = SEED_POSTS.find((p) => p.title === existing.title);
+      if (!seedData) continue;
+      const newUser = findByUsername(seedData.userName);
+      const updateData: any = {};
+      let needsUpdate = false;
+      if (seedData.imageUrl && existing.imageUrl !== seedData.imageUrl) {
+        updateData.imageUrl = seedData.imageUrl;
+        needsUpdate = true;
+      }
+      if (newUser && existing.user?.id !== newUser.id) {
+        updateData.user = newUser;
+        needsUpdate = true;
+      }
+      if (needsUpdate) {
+        await this.postRepository.save({ id: existing.id, ...updateData });
+      }
+    }
+
+    const existingTitles = new Set(existingPosts.map((p) => p.title));
+    if (oldAncla) existingTitles.add('Anime Sleeve Completo');
+    const missingPosts = SEED_POSTS.filter(
+      (p) => !existingTitles.has(p.title),
     );
-    await this.postRepository.save(cleaned);
+
+    if (missingPosts.length > 0) {
+      const posts = missingPosts.map((p) => ({
+        ...p,
+        user: findByUsername(p.userName),
+        studio: findByStudioName(p.studioName),
+        category: findByCategoryName(p.categoryName),
+      }));
+      const cleaned = posts.map(
+        ({ userName, categoryName, studioName, ...rest }) => rest,
+      );
+      await this.postRepository.save(cleaned);
+    }
+
+    const secondaryTitles = Object.keys(SECONDARY_IMAGE_MAP);
+    const secondaryPosts = await this.postRepository.find({
+      where: { title: In(secondaryTitles) },
+      relations: ['user'],
+    });
+
+    for (const post of secondaryPosts) {
+      const expectedImage = SECONDARY_IMAGE_MAP[post.title];
+      const expectedUsername = ALL_DEMO_POST_USER_MAP[post.title];
+      if (
+        expectedImage &&
+        expectedUsername &&
+        post.imageUrl !== expectedImage
+      ) {
+        await this.postRepository.update(post.id, { imageUrl: expectedImage });
+      }
+    }
+
+    await this.postRepository.delete({ title: 'Lobo Realista' });
+
+    const allDemoTitles = Object.keys(ALL_DEMO_POST_USER_MAP);
+    const allDemoPosts = await this.postRepository.find({
+      where: { title: In(allDemoTitles) },
+      relations: ['user'],
+    });
+
+    for (const post of allDemoPosts) {
+      const expectedUsername = ALL_DEMO_POST_USER_MAP[post.title];
+      const expectedUser = findByUsername(expectedUsername);
+      if (expectedUser && (!post.user || post.user.id !== expectedUser.id)) {
+        await this.postRepository.save({ id: post.id, user: expectedUser });
+      }
+    }
   }
 
   private readonly defaultRelations = ['user', 'category', 'likes', 'comments'];
@@ -183,6 +331,22 @@ export class PostService implements OnModuleInit {
     return await this.postRepository.save(newPost);
   }
 
+  async findByUsername(
+    username: string,
+    currentUserId?: number,
+  ): Promise<Post[]> {
+    const user = await this.userRepository.findOne({ where: { username } });
+    if (!user) {
+      throw new NotFoundException(`Usuario ${username} no encontrado`);
+    }
+    const posts = await this.postRepository.find({
+      where: { user: { id: user.id } },
+      relations: this.defaultRelations,
+      order: { createdAt: 'DESC' },
+    });
+    return this.attachLikedByUser(posts, currentUserId);
+  }
+
   async findMyPosts(userId: number, currentUserId?: number): Promise<Post[]> {
     const posts = await this.postRepository.find({
       where: { user: { id: userId } },
@@ -215,7 +379,10 @@ export class PostService implements OnModuleInit {
       relations: this.defaultRelations,
       order: { createdAt: 'DESC' },
     });
-    return this.attachLikedByUser(posts, currentUserId);
+    return this.attachLikedByUser(
+      posts.filter((p) => p.user),
+      currentUserId,
+    );
   }
 
   async findById(id: number, currentUserId?: number): Promise<Post> {
@@ -236,16 +403,19 @@ export class PostService implements OnModuleInit {
       relations: this.defaultRelations,
       order: { createdAt: 'DESC' },
     });
-    return this.attachLikedByUser(posts, currentUserId);
+    return this.attachLikedByUser(
+      posts.filter((p) => p.user),
+      currentUserId,
+    );
   }
 
   async findPopular(currentUserId?: number): Promise<Post[]> {
     const posts = await this.postRepository.find({
       relations: this.defaultRelations,
     });
-    const sorted = posts.sort(
-      (a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0),
-    );
+    const sorted = posts
+      .filter((p) => p.user)
+      .sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0));
     return this.attachLikedByUser(sorted, currentUserId);
   }
 
@@ -253,9 +423,9 @@ export class PostService implements OnModuleInit {
     const posts = await this.postRepository.find({
       relations: this.defaultRelations,
     });
-    const sorted = posts.sort(
-      (a, b) => (b.comments?.length ?? 0) - (a.comments?.length ?? 0),
-    );
+    const sorted = posts
+      .filter((p) => p.user)
+      .sort((a, b) => (b.comments?.length ?? 0) - (a.comments?.length ?? 0));
     return this.attachLikedByUser(sorted, currentUserId);
   }
 

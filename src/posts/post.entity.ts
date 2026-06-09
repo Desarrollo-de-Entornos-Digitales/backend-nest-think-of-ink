@@ -16,49 +16,49 @@ import { Studio } from '../studio/studio.entity';
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
-  user: User;
+  user!: User;
 
   @Column('text')
-  content: string;
+  content!: string;
 
   @Column({ nullable: true })
   imageUrl?: string;
 
   @Column({ nullable: true })
-  title: string;
+  title!: string;
 
   @Column({ nullable: true })
-  location: string;
+  location!: string;
 
   @Column({ nullable: true })
-  postType: string;
+  postType!: string;
 
   @Column({ nullable: true, type: 'int' })
-  priceMin: number;
+  priceMin!: number;
 
   @Column({ nullable: true, type: 'int' })
-  priceMax: number;
+  priceMax!: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ManyToOne(() => Category, (category) => category.posts)
-  category: Category;
+  category!: Category;
 
   @OneToMany(() => Comment, (comment) => comment.post)
-  comments: Comment[];
+  comments!: Comment[];
 
   @OneToMany(() => PostLike, (like) => like.post)
-  likes: PostLike[];
+  likes!: PostLike[];
 
   @ManyToOne(() => Studio, { nullable: true })
-  studio: Studio;
+  studio!: Studio;
 
-  likesCount: number;
-  commentsCount: number;
+  likesCount!: number;
+  commentsCount!: number;
 
   @AfterLoad()
   addCounts() {

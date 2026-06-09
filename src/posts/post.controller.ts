@@ -60,6 +60,18 @@ export class PostController {
     );
   }
 
+  // --- POR USUARIO ---
+
+  @UseGuards(OptionalJwtAuthGuard)
+  @Get('user/:username')
+  findByUsername(
+    @Param('username') username: string,
+    @Req() req: RequestWithUser,
+  ) {
+    const normalized = username.replace(/-/g, '');
+    return this.postService.findByUsername(normalized, req.user?.id);
+  }
+
   // --- CATEGORÍAS (endpoints fijos antes de :id) ---
 
   @UseGuards(OptionalJwtAuthGuard)

@@ -13,9 +13,18 @@ import { Comment } from '../src/comments/comment.entity';
 const IMAGE_MAP: Record<string, string> = {
   'Dragón Japonés Blackwork': '/images/tattoos/tattoo-1.jpg',
   'Mandala Geométrico': '/images/tattoos/tattoo-2.jpg',
-  'Retrato Marilyn Monroe': '/images/tattoos/tattoo-7.jpg',
+  'Anime Sleeve Completo': '/images/tattoos/tattoo-3.jpg',
+  'Fénix Realista': '/images/tattoos/tattoo-4.jpg',
+  'Lettering frase completa en espalda': '/images/tattoos/tattoo-5.jpg',
   'Acuarela Floral': '/images/tattoos/tattoo-6.jpg',
+  'Retrato Marilyn Monroe': '/images/tattoos/tattoo-7.jpg',
+  'Diseño Floral Grande': '/images/tattoos/tattoo-8.jpg',
+  'Geometría Cósmica': '/images/tattoos/tattoo-9.jpg',
   'Rosa Fine Line': '/images/tattoos/tattoo-10.jpg',
+  'Leopardo Realista': '/images/tattoos/tattoo-11.jpg',
+  'Rostro Hiperrealista': '/images/tattoos/tattoo-12.jpg',
+  'Corazón Anatómico': '/images/tattoos/tattoo-13.jpg',
+  'Nombre en Script': '/images/tattoos/tattoo-14.jpg',
 };
 
 async function fixDemoPostImages() {
