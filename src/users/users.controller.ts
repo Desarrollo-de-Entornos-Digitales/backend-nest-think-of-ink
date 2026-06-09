@@ -97,7 +97,7 @@ export class UsersController {
           callback(null, `${uniqueSuffix}${ext}`);
         },
       }),
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 10 * 1024 * 1024 },
       fileFilter: (_req, file, callback) => {
         const allowed = ['.jpg', '.jpeg', '.png', '.webp'];
         const ext = extname(file.originalname).toLowerCase();

@@ -17,57 +17,49 @@ import { User } from '../users/user.entity';
 import { Studio } from '../studio/studio.entity';
 import { Category } from '../category/category.entity';
 
-const SECONDARY_IMAGE_MAP: Record<string, string> = {
-  'Leopardo Realista': '/images/tattoos/tattoo-11.jpg',
-  'Rostro Hiperrealista': '/images/tattoos/tattoo-12.jpg',
-  'Corazón Anatómico': '/images/tattoos/tattoo-13.jpg',
-  'Nombre en Script': '/images/tattoos/tattoo-14.jpg',
-};
-
 const ALL_DEMO_POST_USER_MAP: Record<string, string> = {
-  'Dragón Japonés Blackwork': 'diegorodriguez',
-  'Mandala Geométrico': 'pablogil',
-  'Anime Sleeve Completo': 'sofiatoro',
-  'Fénix Realista': 'luisrojas',
-  'Lettering frase completa en espalda': 'mariagonzalez',
-  'Acuarela Floral': 'dianacruz',
-  'Retrato Marilyn Monroe': 'camilasanchez',
-  'Diseño Floral Grande': 'juanramirez',
-  'Geometría Cósmica': 'diegorodriguez',
-  'Rosa Fine Line': 'mariagonzalez',
-  'Plumas Fine Line': 'juanramirez',
+  'Dragón rojo neo tradicional': 'diegorodriguez',
+  'Geometría cósmica': 'mariagonzalez',
+  'Mandala geométrico': 'pablogil',
+  'Rostro hiperrealista femenino': 'luisrojas',
+  'Neo tradicional rosa y gato': 'juanramirez',
+  'Lettering frase completa en espalda': 'camilasanchez',
+  'Ave fénix realista a color': 'sofiatoro',
+  'Diseño anime blackwork': 'diegorodriguez',
+  'Geometría ornamental en hombro': 'pablogil',
+  'Rostro floral fine line': 'dianacruz',
   'Leopardo Realista': 'luisrojas',
-  'Rostro Hiperrealista': 'camilasanchez',
   'Corazón Anatómico': 'dianacruz',
-  'Nombre en Script': 'dianacruz',
+  'Reloj y brújula geométrica': 'diegorodriguez',
+  'Astronauta minimalista': 'camilasanchez',
+  'Rosa negra neo tradicional': 'diegorodriguez',
 };
-
-const DEMO_USERNAMES = [
-  'luisrojas',
-  'dianacruz',
-  'pablogil',
-  'sofiatoro',
-  'diegorodriguez',
-  'mariagonzalez',
-  'camilasanchez',
-  'juanramirez',
-];
 
 const SEED_POSTS = [
   {
-    content: 'Dragon negro estilo japonés cubriendo todo el brazo',
+    content: 'Dragón rojo estilo neo tradicional con sombras y detalles escamosos',
     imageUrl: '/images/tattoos/tattoo-1.jpg',
-    title: 'Dragón Japonés Blackwork',
+    title: 'Dragón rojo neo tradicional',
     priceMin: 80,
     priceMax: 150,
     userName: 'diegorodriguez',
-    categoryName: 'Blackwork',
+    categoryName: 'Neotradicional',
     studioName: 'Ink Master',
   },
   {
-    content: 'Mandala geométrico en el centro de la espalda',
+    content: 'Geometría cósmica con constelaciones y figuras geométricas',
     imageUrl: '/images/tattoos/tattoo-2.jpg',
-    title: 'Mandala Geométrico',
+    title: 'Geometría cósmica',
+    priceMin: 60,
+    priceMax: 110,
+    userName: 'mariagonzalez',
+    categoryName: 'Geométrico',
+    studioName: 'Fine Line Studio',
+  },
+  {
+    content: 'Mandala geométrico detallado en el centro de la espalda',
+    imageUrl: '/images/tattoos/tattoo-3.jpg',
+    title: 'Mandala geométrico',
     priceMin: 60,
     priceMax: 100,
     userName: 'pablogil',
@@ -75,59 +67,19 @@ const SEED_POSTS = [
     studioName: 'Black House Tattoo',
   },
   {
-    content: 'Sleeve completo de anime con personajes y acción',
-    imageUrl: '/images/tattoos/tattoo-3.jpg',
-    title: 'Anime Sleeve Completo',
+    content: 'Rostro femenino hiperrealista en escala de grises',
+    imageUrl: '/images/tattoos/tattoo-4.jpg',
+    title: 'Rostro hiperrealista femenino',
     priceMin: 120,
     priceMax: 200,
-    userName: 'sofiatoro',
-    categoryName: 'Neotradicional',
-    studioName: 'Ink Starter Studio',
-  },
-  {
-    content: 'Fénix realista renaciendo entre llamas en el antebrazo',
-    imageUrl: '/images/tattoos/tattoo-4.jpg',
-    title: 'Fénix Realista',
-    priceMin: 100,
-    priceMax: 180,
     userName: 'luisrojas',
     categoryName: 'Realismo',
     studioName: 'Real Ink Tattoo',
   },
   {
-    content: 'Frase completa en lettering cursiva a lo largo de la espalda',
+    content: 'Rosa neo tradicional acompañada de un gato estilizado',
     imageUrl: '/images/tattoos/tattoo-5.jpg',
-    title: 'Lettering frase completa en espalda',
-    priceMin: 50,
-    priceMax: 90,
-    userName: 'mariagonzalez',
-    categoryName: 'Fine Line',
-    studioName: 'Fine Line Studio',
-  },
-  {
-    content: 'Explosión de acuarela con colores pastel y flores',
-    imageUrl: '/images/tattoos/tattoo-6.jpg',
-    title: 'Acuarela Floral',
-    priceMin: 50,
-    priceMax: 90,
-    userName: 'dianacruz',
-    categoryName: 'Acuarela',
-    studioName: 'Neo Art Studio',
-  },
-  {
-    content: 'Retrato realista de Marilyn Monroe en escala de grises',
-    imageUrl: '/images/tattoos/tattoo-7.jpg',
-    title: 'Retrato Marilyn Monroe',
-    priceMin: 120,
-    priceMax: 200,
-    userName: 'camilasanchez',
-    categoryName: 'Realismo',
-    studioName: 'Real Ink Tattoo',
-  },
-  {
-    content: 'Diseño floral grande con rosas y girasoles en el muslo',
-    imageUrl: '/images/tattoos/tattoo-8.jpg',
-    title: 'Diseño Floral Grande',
+    title: 'Neo tradicional rosa y gato',
     priceMin: 70,
     priceMax: 120,
     userName: 'juanramirez',
@@ -135,24 +87,104 @@ const SEED_POSTS = [
     studioName: 'Mini Tattoo Cali',
   },
   {
-    content: 'Geometría cósmica con constelaciones y figuras geométricas',
-    imageUrl: '/images/tattoos/tattoo-9.jpg',
-    title: 'Geometría Cósmica',
-    priceMin: 60,
-    priceMax: 110,
+    content: 'Frase completa en lettering cursiva a lo largo de la espalda',
+    imageUrl: '/images/tattoos/tattoo-6.jpg',
+    title: 'Lettering frase completa en espalda',
+    priceMin: 50,
+    priceMax: 90,
+    userName: 'camilasanchez',
+    categoryName: 'Fine Line',
+    studioName: 'Fine Line Studio',
+  },
+  {
+    content: 'Ave fénix realista renaciendo entre llamas a todo color',
+    imageUrl: '/images/tattoos/tattoo-7.jpg',
+    title: 'Ave fénix realista a color',
+    priceMin: 100,
+    priceMax: 180,
+    userName: 'sofiatoro',
+    categoryName: 'Realismo',
+    studioName: 'Neo Art Studio',
+  },
+  {
+    content: 'Diseño anime en blackwork con personajes y acción',
+    imageUrl: '/images/tattoos/tattoo-8.jpg',
+    title: 'Diseño anime blackwork',
+    priceMin: 80,
+    priceMax: 150,
     userName: 'diegorodriguez',
+    categoryName: 'Blackwork',
+    studioName: 'Ink Starter Studio',
+  },
+  {
+    content: 'Geometría ornamental detallada sobre el hombro',
+    imageUrl: '/images/tattoos/tattoo-9.jpg',
+    title: 'Geometría ornamental en hombro',
+    priceMin: 60,
+    priceMax: 100,
+    userName: 'pablogil',
     categoryName: 'Geométrico',
     studioName: 'Black House Tattoo',
   },
   {
-    content: 'Rosa minimalista en línea fina para antebrazo',
+    content: 'Rostro femenino combinado con elementos florales en fine line',
     imageUrl: '/images/tattoos/tattoo-10.jpg',
-    title: 'Rosa Fine Line',
-    priceMin: 40,
-    priceMax: 70,
-    userName: 'mariagonzalez',
+    title: 'Rostro floral fine line',
+    priceMin: 50,
+    priceMax: 90,
+    userName: 'dianacruz',
     categoryName: 'Fine Line',
     studioName: 'Fine Line Studio',
+  },
+  {
+    content: 'Leopardo realista en brazo con detalles de pelaje',
+    imageUrl: '/images/tattoos/tattoo-11.jpg',
+    title: 'Leopardo Realista',
+    priceMin: 90,
+    priceMax: 160,
+    userName: 'luisrojas',
+    categoryName: 'Realismo',
+    studioName: 'Real Ink Tattoo',
+  },
+  {
+    content: 'Corazón anatómico realista en antebrazo',
+    imageUrl: '/images/tattoos/tattoo-13.jpg',
+    title: 'Corazón Anatómico',
+    priceMin: 80,
+    priceMax: 140,
+    userName: 'dianacruz',
+    categoryName: 'Realismo',
+    studioName: 'Real Ink Tattoo',
+  },
+  {
+    content: 'Reloj de bolsillo y brújula en estilo geométrico',
+    imageUrl: '/images/tattoos/tattoo-15.jpg',
+    title: 'Reloj y brújula geométrica',
+    priceMin: 70,
+    priceMax: 130,
+    userName: 'diegorodriguez',
+    categoryName: 'Geométrico',
+    studioName: 'Ink Master',
+  },
+  {
+    content: 'Astronauta flotando en estilo minimalista fine line',
+    imageUrl: '/images/tattoos/tattoo-16.jpg',
+    title: 'Astronauta minimalista',
+    priceMin: 50,
+    priceMax: 90,
+    userName: 'camilasanchez',
+    categoryName: 'Fine Line',
+    studioName: 'Fine Line Studio',
+  },
+  {
+    content: 'Rosa negra estilo neo tradicional con sombras marcadas',
+    imageUrl: '/images/tattoos/tattoo-17.jpg',
+    title: 'Rosa negra neo tradicional',
+    priceMin: 70,
+    priceMax: 130,
+    userName: 'diegorodriguez',
+    categoryName: 'Neotradicional',
+    studioName: 'Ink Master',
   },
 ];
 
@@ -185,27 +217,6 @@ export class PostService implements OnModuleInit {
     const findByCategoryName = (c: string) =>
       categories.find((x) => x.name === c);
 
-    const oldAncla = await this.postRepository.findOne({
-      where: { title: 'Ancla Tradicional' },
-    });
-    const animeSeed = SEED_POSTS.find((p) => p.title === 'Anime Sleeve Completo');
-    if (oldAncla && animeSeed) {
-      const newUser = findByUsername(animeSeed.userName);
-      const newStudio = findByStudioName(animeSeed.studioName);
-      const newCategory = findByCategoryName(animeSeed.categoryName);
-      await this.postRepository.save({
-        id: oldAncla.id,
-        content: animeSeed.content,
-        imageUrl: animeSeed.imageUrl,
-        title: animeSeed.title,
-        priceMin: animeSeed.priceMin,
-        priceMax: animeSeed.priceMax,
-        user: newUser,
-        studio: newStudio,
-        category: newCategory,
-      });
-    }
-
     const demoPostTitles = SEED_POSTS.map((p) => p.title);
     const existingPosts = await this.postRepository.find({
       where: { title: In(demoPostTitles) },
@@ -232,10 +243,7 @@ export class PostService implements OnModuleInit {
     }
 
     const existingTitles = new Set(existingPosts.map((p) => p.title));
-    if (oldAncla) existingTitles.add('Anime Sleeve Completo');
-    const missingPosts = SEED_POSTS.filter(
-      (p) => !existingTitles.has(p.title),
-    );
+    const missingPosts = SEED_POSTS.filter((p) => !existingTitles.has(p.title));
 
     if (missingPosts.length > 0) {
       const posts = missingPosts.map((p) => ({
@@ -250,25 +258,31 @@ export class PostService implements OnModuleInit {
       await this.postRepository.save(cleaned);
     }
 
-    const secondaryTitles = Object.keys(SECONDARY_IMAGE_MAP);
-    const secondaryPosts = await this.postRepository.find({
-      where: { title: In(secondaryTitles) },
-      relations: ['user'],
+    await this.postRepository.delete({
+      title: In([
+        'Ancla Tradicional',
+        'Lobo Realista',
+        'Plumas Fine Line',
+        'Rostro Hiperrealista',
+        'Nombre en Script',
+        'Acuarela paisaje marino',
+        'Neotradicional calavera mexicana',
+        'Blackwork mandala floral',
+        'Realismo retrato canino',
+        'Dragón Japonés Blackwork',
+        'Mandala Geométrico',
+        'Anime Sleeve Completo',
+        'Fénix Realista',
+        'Acuarela Floral',
+        'Retrato Marilyn Monroe',
+        'Diseño Floral Grande',
+        'Geometría Cósmica',
+        'Rosa Fine Line',
+        'Color realismo ave exótica',
+        'Dragón blackwork tradicional',
+        'Arte lineal abstracto',
+      ]),
     });
-
-    for (const post of secondaryPosts) {
-      const expectedImage = SECONDARY_IMAGE_MAP[post.title];
-      const expectedUsername = ALL_DEMO_POST_USER_MAP[post.title];
-      if (
-        expectedImage &&
-        expectedUsername &&
-        post.imageUrl !== expectedImage
-      ) {
-        await this.postRepository.update(post.id, { imageUrl: expectedImage });
-      }
-    }
-
-    await this.postRepository.delete({ title: 'Lobo Realista' });
 
     const allDemoTitles = Object.keys(ALL_DEMO_POST_USER_MAP);
     const allDemoPosts = await this.postRepository.find({
@@ -331,11 +345,29 @@ export class PostService implements OnModuleInit {
     return await this.postRepository.save(newPost);
   }
 
+  private normalizeUsername(u: string): string {
+    return u
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\s_-]+/g, '')
+      .toLowerCase();
+  }
+
   async findByUsername(
     username: string,
     currentUserId?: number,
   ): Promise<Post[]> {
-    const user = await this.userRepository.findOne({ where: { username } });
+    const cleanUsername = this.normalizeUsername(username);
+    let user = await this.userRepository.findOne({
+      where: { username: cleanUsername },
+    });
+    if (!user) {
+      const allUsers = await this.userRepository.find();
+      const found = allUsers.find(
+        (u) => this.normalizeUsername(u.username) === cleanUsername,
+      );
+      if (found) user = found;
+    }
     if (!user) {
       throw new NotFoundException(`Usuario ${username} no encontrado`);
     }

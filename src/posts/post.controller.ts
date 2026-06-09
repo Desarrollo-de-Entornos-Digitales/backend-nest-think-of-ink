@@ -13,6 +13,7 @@ import {
   Req,
   Query,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -36,6 +37,8 @@ interface RequestWithUser extends Request {
 
 @Controller('posts')
 export class PostController {
+  private readonly logger = new Logger(PostController.name);
+
   constructor(
     private readonly postService: PostService,
     private readonly likesService: LikesService,
@@ -145,8 +148,16 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Post(':id/like')
-  like(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
-    return this.likesService.like(req.user.id, id);
+  async like(@Param('id', ParseIntPipe) id: number, @Req() req: RequestWithUser) {
+    this.logger.log(`like() called: postId=${id}, userId=${req.user?.id}`);
+    try {
+      return await this.likesService.like(req.user.id, id);
+    } catch (error) {
+      this.logger.error(`Error in like endpoint: postId=${id}, userId=${req.user?.id}`);
+      this.logger.error(`Error details: ${error instanceof Error ? error.message : error}`);
+      this.logger.error(`Stack: ${error instanceof Error ? error.stack : 'N/A'}`);
+      throw error;
+    }
   }
 
   // --- COMENTARIOS ---
